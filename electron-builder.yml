@@ -1,0 +1,12 @@
+appId: com.example.my-dost
+productName: My-DOST
+copyright: Copyright © 2022 PyBOTs LLC
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - app
+publish: null
