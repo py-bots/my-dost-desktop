@@ -25,6 +25,9 @@ function Home() {
         <Link href='/editor'>
           <a className='btn-blue'>Go to Editor</a>
         </Link>
+        <Link href='/login'>
+          <a className='btn-blue'>Go to Login</a>
+        </Link>
 
       </div>
     </React.Fragment>
