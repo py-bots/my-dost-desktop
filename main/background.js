@@ -35,15 +35,15 @@ app.on('window-all-closed', () => {
 ipcMain.on('login', (event, arg) => {
   const email = arg.email;
   const password = arg.password;
-  console.log('Email : ',email, 'Pass', password);
+  console.log('Email : ',email, 'Pass', password, 'background.js');
 
   // if email and password are correct
-  if (email ==='murali' && password === 'murali') {
-    event.reply('login-success', {status: true, message: 'Login Success'});
-    console.log('Login Success');
+  if (email ==='mmv@gmail.com' && password === 'murali') {
+    event.reply('login', {status: true, message: 'Login Success'});
+    console.log('Login Success, backgroud.js');
   } else {
-    event.reply('login-error', {status: false, message: 'Login Failed'});
-    console.log('Login Failed');
+    event.reply('login', {status: false, message: 'Login Failed'});
+    console.log('Login Failed, backgroud.js');
   }
   // else
   // event.reply('login-reply', 'error');

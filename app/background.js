@@ -4344,20 +4344,20 @@ electron__WEBPACK_IMPORTED_MODULE_0__.app.on('window-all-closed', () => {
 electron__WEBPACK_IMPORTED_MODULE_0__.ipcMain.on('login', (event, arg) => {
   const email = arg.email;
   const password = arg.password;
-  console.log('Email : ', email, 'Pass', password); // if email and password are correct
+  console.log('Email : ', email, 'Pass', password, 'background.js'); // if email and password are correct
 
-  if (email === 'murali' && password === 'murali') {
-    event.reply('login-success', {
+  if (email === 'mmv@gmail.com' && password === 'murali') {
+    event.reply('login', {
       status: true,
       message: 'Login Success'
     });
-    console.log('Login Success');
+    console.log('Login Success, backgroud.js');
   } else {
-    event.reply('login-error', {
+    event.reply('login', {
       status: false,
       message: 'Login Failed'
     });
-    console.log('Login Failed');
+    console.log('Login Failed, backgroud.js');
   } // else
   // event.reply('login-reply', 'error');
   // const url = 'https://api.example.com/login';
