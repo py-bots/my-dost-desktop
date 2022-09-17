@@ -2,7 +2,6 @@ import {
   screen,
   BrowserWindow,
 } from 'electron';
-const path = require("path");
 import Store from 'electron-store';
 
 export default function createWindow(windowName, options) {
@@ -65,7 +64,7 @@ export default function createWindow(windowName, options) {
     }
     store.set(key, state);
   };
-  console.log(__dirname)
+
 
   state = ensureVisibleOnSomeDisplay(restore());
 
@@ -73,9 +72,8 @@ export default function createWindow(windowName, options) {
     ...options,
     ...state,
     webPreferences: {
-      nodeIntegration :false, 
-      contextIsolation: true,
-      preload: path.join(__dirname, "../index_preload.js"), //TODO:change this to more generalized preload.js later. 
+      nodeIntegration: true ,//currently its a must
+      contextIsolation: false,
       ...options.webPreferences,
     },
   

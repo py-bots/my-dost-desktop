@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import login from '../API/serverAPIs.js';
-import { json } from 'express/lib/response.js';
+
 class LoginForm extends React.Component {
     constructor(props) {
         super(props);
@@ -17,9 +17,9 @@ class LoginForm extends React.Component {
 
        
     }
-    handleSubmit(event) {
+    async handleSubmit(event) {
         console.log('Email : ' + this.state.email +  " Password :  " +  this.state.password);
-        login(this.state.email, this.state.password);
+        await login(this.state.email, this.state.password);
         
     }
 

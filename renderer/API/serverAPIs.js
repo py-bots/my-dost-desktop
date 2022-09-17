@@ -1,7 +1,9 @@
+import electron from 'electron';
 
-export default function login(email, password) {
+const ipcRenderer = electron.ipcRenderer || false;
+export default async function login(email, password) {
     try{
-      window.IndexBridge.login(email, password);
+     var res =  await ipcRenderer.invoke("login" , email , password) ;
     }
     catch(error){
         console.log("error occured " + error);
