@@ -31,54 +31,41 @@ if (isProd) {
 app.on('window-all-closed', () => {
   app.quit();
 });
-const replacerFunc = () => {
-  const visited = new WeakSet();
-  return (key, value) => {
-    if (typeof value === "object" && value !== null) {
-      if (visited.has(value)) {
-        return;
-      }
-      visited.add(value);
-    }
 
-    return value;
-  };
-};
-ipcMain.handle("login" , (email , password) => {
-    try {
-      console.log("Inside the login function 2") ; 
-      
-          const request = net.request({
-              method: 'POST',
-              protocol: 'https:',
-              hostname: 'api.pybots.ai',
-              path: '/auth/login/',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body:  JSON.stringify({
-                  "email": email,
-                  "password": password
-              },
-              replacerFunc())
-          })
-          request.on('response', (response) => {
-              console.log(`STATUS: ${response.statusCode}`)
-              console.log(`HEADERS: ${response.headers}`)
-              response.on('data', (chunk) => {
-                  console.log(`BODY: ${chunk}`)
-              })
-              response.on('end', () => {
-                  console.log('No more data in response.')
-              })
-          });
-          request.end();
-  
-      
-          
-      } catch (error) {
-          console.log("error occured" + error);
-      }
+ipcMain.on('login', (event, arg) => {
+  const email = arg.email;
+  const password = arg.password;
+  console.log('Email : ',email, 'Pass', password);
 
-  
-})
+  // if email and password are correct
+  if (email ==='murali' && password === 'murali') {
+    event.reply('login-success', {status: true, message: 'Login Success'});
+    console.log('Login Success');
+  } else {
+    event.reply('login-error', {status: false, message: 'Login Failed'});
+    console.log('Login Failed');
+  }
+  // else
+  // event.reply('login-reply', 'error');
+
+  // const url = 'https://api.example.com/login';
+  // const options = {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({
+  //     email,
+  //     password,
+  //   }),
+  // };
+  // const request = net.request(url);
+  // request.on('response', (response) => {
+  //   response.on('data', (chunk) => {
+  //     event.sender.send('login-response', chunk.toString());
+  //   });
+  // }
+  // );
+  // request.write(JSON.stringify(options.body));
+  // request.end();
+});
