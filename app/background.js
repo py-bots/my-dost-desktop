@@ -56,6 +56,9 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 
 
+const path = __webpack_require__(/*! path */ "path");
+
+
 function createWindow(windowName, options) {
   const key = 'window-state';
   const name = `window-state-${windowName}`;
@@ -118,11 +121,13 @@ function createWindow(windowName, options) {
     store.set(key, state);
   };
 
+  console.log(__dirname);
   state = ensureVisibleOnSomeDisplay(restore());
   win = new electron__WEBPACK_IMPORTED_MODULE_11__.BrowserWindow(_objectSpread(_objectSpread(_objectSpread({}, options), state), {}, {
     webPreferences: _objectSpread({
-      nodeIntegration: true,
-      contextIsolation: false
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, "../index_preload.js")
     }, options.webPreferences)
   }));
   win.on('close', saveState);
@@ -237,6 +242,27 @@ var ArrayPrototype = Array.prototype;
 module.exports = function (it) {
   var own = it.some;
   return it === ArrayPrototype || (isPrototypeOf(ArrayPrototype, it) && own === ArrayPrototype.some) ? method : own;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/es/json/stringify.js":
+/*!********************************************************!*\
+  !*** ./node_modules/core-js-pure/es/json/stringify.js ***!
+  \********************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+__webpack_require__(/*! ../../modules/es.json.stringify */ "./node_modules/core-js-pure/modules/es.json.stringify.js");
+var path = __webpack_require__(/*! ../../internals/path */ "./node_modules/core-js-pure/internals/path.js");
+var apply = __webpack_require__(/*! ../../internals/function-apply */ "./node_modules/core-js-pure/internals/function-apply.js");
+
+// eslint-disable-next-line es-x/no-json -- safe
+if (!path.JSON) path.JSON = { stringify: JSON.stringify };
+
+// eslint-disable-next-line no-unused-vars -- required for `.length`
+module.exports = function stringify(it, replacer, space) {
+  return apply(path.JSON.stringify, null, arguments);
 };
 
 
@@ -3966,6 +3992,19 @@ module.exports = parent;
 
 /***/ }),
 
+/***/ "./node_modules/core-js-pure/stable/json/stringify.js":
+/*!************************************************************!*\
+  !*** ./node_modules/core-js-pure/stable/json/stringify.js ***!
+  \************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var parent = __webpack_require__(/*! ../../es/json/stringify */ "./node_modules/core-js-pure/es/json/stringify.js");
+
+module.exports = parent;
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js-pure/stable/object/assign.js":
 /*!***********************************************************!*\
   !*** ./node_modules/core-js-pure/stable/object/assign.js ***!
@@ -4090,6 +4129,17 @@ module.exports = require("electron");
 
 /***/ }),
 
+/***/ "path":
+/*!***********************!*\
+  !*** external "path" ***!
+  \***********************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("path");
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js":
 /*!*******************************************************************************!*\
   !*** ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js ***!
@@ -4117,6 +4167,16 @@ module.exports = __webpack_require__(/*! core-js-pure/stable/instance/for-each *
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = __webpack_require__(/*! core-js-pure/stable/instance/some */ "./node_modules/core-js-pure/stable/instance/some.js");
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime-corejs3/core-js-stable/json/stringify.js":
+/*!******************************************************************************!*\
+  !*** ./node_modules/@babel/runtime-corejs3/core-js-stable/json/stringify.js ***!
+  \******************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__(/*! core-js-pure/stable/json/stringify */ "./node_modules/core-js-pure/stable/json/stringify.js");
 
 /***/ }),
 
@@ -4303,27 +4363,30 @@ var __webpack_exports__ = {};
   !*** ./main/background.js ***!
   \****************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! electron */ "electron");
-/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var electron_serve__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! electron-serve */ "electron-serve");
-/* harmony import */ var electron_serve__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(electron_serve__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./helpers */ "./main/helpers/index.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/json/stringify */ "./node_modules/@babel/runtime-corejs3/core-js-stable/json/stringify.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! electron */ "electron");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var electron_serve__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! electron-serve */ "electron-serve");
+/* harmony import */ var electron_serve__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(electron_serve__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./helpers */ "./main/helpers/index.js");
+
 
 
 
 const isProd = "development" === 'production';
 
 if (isProd) {
-  electron_serve__WEBPACK_IMPORTED_MODULE_1___default()({
+  electron_serve__WEBPACK_IMPORTED_MODULE_2___default()({
     directory: 'app'
   });
 } else {
-  electron__WEBPACK_IMPORTED_MODULE_0__.app.setPath('userData', `${electron__WEBPACK_IMPORTED_MODULE_0__.app.getPath('userData')} (development)`);
+  electron__WEBPACK_IMPORTED_MODULE_1__.app.setPath('userData', `${electron__WEBPACK_IMPORTED_MODULE_1__.app.getPath('userData')} (development)`);
 }
 
 (async () => {
-  await electron__WEBPACK_IMPORTED_MODULE_0__.app.whenReady();
-  const mainWindow = (0,_helpers__WEBPACK_IMPORTED_MODULE_2__.createWindow)('main', {
+  await electron__WEBPACK_IMPORTED_MODULE_1__.app.whenReady();
+  const mainWindow = (0,_helpers__WEBPACK_IMPORTED_MODULE_3__.createWindow)('main', {
     width: 1000,
     height: 600
   });
@@ -4337,8 +4400,43 @@ if (isProd) {
   }
 })();
 
-electron__WEBPACK_IMPORTED_MODULE_0__.app.on('window-all-closed', () => {
-  electron__WEBPACK_IMPORTED_MODULE_0__.app.quit();
+electron__WEBPACK_IMPORTED_MODULE_1__.app.on('window-all-closed', () => {
+  electron__WEBPACK_IMPORTED_MODULE_1__.app.quit();
+});
+electron__WEBPACK_IMPORTED_MODULE_1__.ipcMain.handle("login", (email, password) => {
+  console.log("Inside the login function 1 ");
+  console.log(email);
+  console.log(password);
+
+  try {
+    console.log("Inside the login function 2");
+    const request = electron__WEBPACK_IMPORTED_MODULE_1__.net.request({
+      method: 'POST',
+      protocol: 'https:',
+      hostname: 'api.pybots.ai',
+      path: '/auth/login',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0___default()({
+        email: email,
+        password: password
+      })
+    });
+    request.on('response', response => {
+      console.log(`STATUS: ${response.statusCode}`);
+      console.log(`HEADERS: ${_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0___default()(response.headers)}`);
+      response.on('data', chunk => {
+        console.log(`BODY: ${chunk}`);
+      });
+      response.on('end', () => {
+        console.log('No more data in response.');
+      });
+    });
+    request.end();
+  } catch (error) {
+    console.log("error occured" + error);
+  }
 });
 })();
 

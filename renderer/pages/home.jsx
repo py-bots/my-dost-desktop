@@ -5,6 +5,7 @@ import Link from 'next/link';
 function Home() {
   return (
     <React.Fragment>
+      <script> const global = globalThis; </script>
       <Head>
         <title>Home - Nextron (with-javascript-tailwindcss)</title>
       </Head>

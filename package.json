@@ -16,11 +16,12 @@
         "electron-serve": "^1.1.0",
         "electron-store": "^8.1.0",
         "react-blockly": "^7.0.1",
-        "react-datepicker": "^4.8.0"
+        "react-datepicker": "^4.8.0",
+        "react-logger": "^1.1.0"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.7",
-        "electron": "^20.1.0",
+        "electron": "^20.1.4",
         "electron-builder": "^23.3.3",
         "next": "^12.2.5",
         "nextron": "^8.2.0",

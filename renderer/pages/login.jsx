@@ -18,7 +18,7 @@ class LoginForm extends React.Component {
        
     }
     handleSubmit(event) {
-        alert('Email : ' + this.state.email +  " Password :  " +  this.state.password);
+        console.log('Email : ' + this.state.email +  " Password :  " +  this.state.password);
         login(this.state.email, this.state.password);
         
     }
