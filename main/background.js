@@ -31,22 +31,12 @@ if (isProd) {
 app.on('window-all-closed', () => {
   app.quit();
 });
-const replacerFunc = () => {
-  const visited = new WeakSet();
-  return (key, value) => {
-    if (typeof value === "object" && value !== null) {
-      if (visited.has(value)) {
-        return;
-      }
-      visited.add(value);
-    }
 
-    return value;
-  };
-};
-ipcMain.handle("login" , (email , password) => {
+ipcMain.handle("login" , (obj ,data) => {
     try {
       console.log("Inside the login function 2") ; 
+      console.log(data);
+      console.log(JSON.stringify(data))
       
           const request = net.request({
               method: 'POST',
@@ -56,12 +46,12 @@ ipcMain.handle("login" , (email , password) => {
               headers: {
                   'Content-Type': 'application/json'
               },
-              body:  JSON.stringify({
-                  "email": email,
-                  "password": password
-              },
-              replacerFunc())
+               body:  JSON.stringify({
+                   data
+              })
+              
           })
+          //solve the problem of 400 
           request.on('response', (response) => {
               console.log(`STATUS: ${response.statusCode}`)
               console.log(`HEADERS: ${response.headers}`)
@@ -73,7 +63,7 @@ ipcMain.handle("login" , (email , password) => {
               })
           });
           request.end();
-  
+          return "success from login function";
       
           
       } catch (error) {

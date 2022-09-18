@@ -380,22 +380,6 @@ module.exports = path.Object.keys;
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/es/weak-set/index.js":
-/*!********************************************************!*\
-  !*** ./node_modules/core-js-pure/es/weak-set/index.js ***!
-  \********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-__webpack_require__(/*! ../../modules/es.array.iterator */ "./node_modules/core-js-pure/modules/es.array.iterator.js");
-__webpack_require__(/*! ../../modules/es.object.to-string */ "./node_modules/core-js-pure/modules/es.object.to-string.js");
-__webpack_require__(/*! ../../modules/es.weak-set */ "./node_modules/core-js-pure/modules/es.weak-set.js");
-var path = __webpack_require__(/*! ../../internals/path */ "./node_modules/core-js-pure/internals/path.js");
-
-module.exports = path.WeakSet;
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js-pure/features/object/define-property.js":
 /*!**********************************************************************!*\
   !*** ./node_modules/core-js-pure/features/object/define-property.js ***!
@@ -470,24 +454,6 @@ module.exports = function () { /* empty */ };
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/internals/an-instance.js":
-/*!************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/an-instance.js ***!
-  \************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var isPrototypeOf = __webpack_require__(/*! ../internals/object-is-prototype-of */ "./node_modules/core-js-pure/internals/object-is-prototype-of.js");
-
-var $TypeError = TypeError;
-
-module.exports = function (it, Prototype) {
-  if (isPrototypeOf(Prototype, it)) return it;
-  throw $TypeError('Incorrect invocation');
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js-pure/internals/an-object.js":
 /*!**********************************************************!*\
   !*** ./node_modules/core-js-pure/internals/an-object.js ***!
@@ -504,26 +470,6 @@ module.exports = function (argument) {
   if (isObject(argument)) return argument;
   throw $TypeError($String(argument) + ' is not an object');
 };
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/array-buffer-non-extensible.js":
-/*!****************************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/array-buffer-non-extensible.js ***!
-  \****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-// FF26- bug: ArrayBuffers are non-extensible, but Object.isExtensible does not report it
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js-pure/internals/fails.js");
-
-module.exports = fails(function () {
-  if (typeof ArrayBuffer == 'function') {
-    var buffer = new ArrayBuffer(8);
-    // eslint-disable-next-line es-x/no-object-isextensible, es-x/no-object-defineproperty -- safe
-    if (Object.isExtensible(buffer)) Object.defineProperty(buffer, 'a', { value: 8 });
-  }
-});
 
 
 /***/ }),
@@ -871,235 +817,6 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/internals/collection-weak.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/collection-weak.js ***!
-  \****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js-pure/internals/function-uncurry-this.js");
-var defineBuiltIns = __webpack_require__(/*! ../internals/define-built-ins */ "./node_modules/core-js-pure/internals/define-built-ins.js");
-var getWeakData = (__webpack_require__(/*! ../internals/internal-metadata */ "./node_modules/core-js-pure/internals/internal-metadata.js").getWeakData);
-var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_modules/core-js-pure/internals/an-instance.js");
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js-pure/internals/an-object.js");
-var isNullOrUndefined = __webpack_require__(/*! ../internals/is-null-or-undefined */ "./node_modules/core-js-pure/internals/is-null-or-undefined.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js-pure/internals/is-object.js");
-var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js-pure/internals/iterate.js");
-var ArrayIterationModule = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js-pure/internals/array-iteration.js");
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "./node_modules/core-js-pure/internals/has-own-property.js");
-var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js-pure/internals/internal-state.js");
-
-var setInternalState = InternalStateModule.set;
-var internalStateGetterFor = InternalStateModule.getterFor;
-var find = ArrayIterationModule.find;
-var findIndex = ArrayIterationModule.findIndex;
-var splice = uncurryThis([].splice);
-var id = 0;
-
-// fallback for uncaught frozen keys
-var uncaughtFrozenStore = function (store) {
-  return store.frozen || (store.frozen = new UncaughtFrozenStore());
-};
-
-var UncaughtFrozenStore = function () {
-  this.entries = [];
-};
-
-var findUncaughtFrozen = function (store, key) {
-  return find(store.entries, function (it) {
-    return it[0] === key;
-  });
-};
-
-UncaughtFrozenStore.prototype = {
-  get: function (key) {
-    var entry = findUncaughtFrozen(this, key);
-    if (entry) return entry[1];
-  },
-  has: function (key) {
-    return !!findUncaughtFrozen(this, key);
-  },
-  set: function (key, value) {
-    var entry = findUncaughtFrozen(this, key);
-    if (entry) entry[1] = value;
-    else this.entries.push([key, value]);
-  },
-  'delete': function (key) {
-    var index = findIndex(this.entries, function (it) {
-      return it[0] === key;
-    });
-    if (~index) splice(this.entries, index, 1);
-    return !!~index;
-  }
-};
-
-module.exports = {
-  getConstructor: function (wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER) {
-    var Constructor = wrapper(function (that, iterable) {
-      anInstance(that, Prototype);
-      setInternalState(that, {
-        type: CONSTRUCTOR_NAME,
-        id: id++,
-        frozen: undefined
-      });
-      if (!isNullOrUndefined(iterable)) iterate(iterable, that[ADDER], { that: that, AS_ENTRIES: IS_MAP });
-    });
-
-    var Prototype = Constructor.prototype;
-
-    var getInternalState = internalStateGetterFor(CONSTRUCTOR_NAME);
-
-    var define = function (that, key, value) {
-      var state = getInternalState(that);
-      var data = getWeakData(anObject(key), true);
-      if (data === true) uncaughtFrozenStore(state).set(key, value);
-      else data[state.id] = value;
-      return that;
-    };
-
-    defineBuiltIns(Prototype, {
-      // `{ WeakMap, WeakSet }.prototype.delete(key)` methods
-      // https://tc39.es/ecma262/#sec-weakmap.prototype.delete
-      // https://tc39.es/ecma262/#sec-weakset.prototype.delete
-      'delete': function (key) {
-        var state = getInternalState(this);
-        if (!isObject(key)) return false;
-        var data = getWeakData(key);
-        if (data === true) return uncaughtFrozenStore(state)['delete'](key);
-        return data && hasOwn(data, state.id) && delete data[state.id];
-      },
-      // `{ WeakMap, WeakSet }.prototype.has(key)` methods
-      // https://tc39.es/ecma262/#sec-weakmap.prototype.has
-      // https://tc39.es/ecma262/#sec-weakset.prototype.has
-      has: function has(key) {
-        var state = getInternalState(this);
-        if (!isObject(key)) return false;
-        var data = getWeakData(key);
-        if (data === true) return uncaughtFrozenStore(state).has(key);
-        return data && hasOwn(data, state.id);
-      }
-    });
-
-    defineBuiltIns(Prototype, IS_MAP ? {
-      // `WeakMap.prototype.get(key)` method
-      // https://tc39.es/ecma262/#sec-weakmap.prototype.get
-      get: function get(key) {
-        var state = getInternalState(this);
-        if (isObject(key)) {
-          var data = getWeakData(key);
-          if (data === true) return uncaughtFrozenStore(state).get(key);
-          return data ? data[state.id] : undefined;
-        }
-      },
-      // `WeakMap.prototype.set(key, value)` method
-      // https://tc39.es/ecma262/#sec-weakmap.prototype.set
-      set: function set(key, value) {
-        return define(this, key, value);
-      }
-    } : {
-      // `WeakSet.prototype.add(value)` method
-      // https://tc39.es/ecma262/#sec-weakset.prototype.add
-      add: function add(value) {
-        return define(this, value, true);
-      }
-    });
-
-    return Constructor;
-  }
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/collection.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/collection.js ***!
-  \***********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js-pure/internals/export.js");
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js-pure/internals/global.js");
-var InternalMetadataModule = __webpack_require__(/*! ../internals/internal-metadata */ "./node_modules/core-js-pure/internals/internal-metadata.js");
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js-pure/internals/fails.js");
-var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js-pure/internals/create-non-enumerable-property.js");
-var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js-pure/internals/iterate.js");
-var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_modules/core-js-pure/internals/an-instance.js");
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js-pure/internals/is-callable.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js-pure/internals/is-object.js");
-var setToStringTag = __webpack_require__(/*! ../internals/set-to-string-tag */ "./node_modules/core-js-pure/internals/set-to-string-tag.js");
-var defineProperty = (__webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js-pure/internals/object-define-property.js").f);
-var forEach = (__webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js-pure/internals/array-iteration.js").forEach);
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js-pure/internals/descriptors.js");
-var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js-pure/internals/internal-state.js");
-
-var setInternalState = InternalStateModule.set;
-var internalStateGetterFor = InternalStateModule.getterFor;
-
-module.exports = function (CONSTRUCTOR_NAME, wrapper, common) {
-  var IS_MAP = CONSTRUCTOR_NAME.indexOf('Map') !== -1;
-  var IS_WEAK = CONSTRUCTOR_NAME.indexOf('Weak') !== -1;
-  var ADDER = IS_MAP ? 'set' : 'add';
-  var NativeConstructor = global[CONSTRUCTOR_NAME];
-  var NativePrototype = NativeConstructor && NativeConstructor.prototype;
-  var exported = {};
-  var Constructor;
-
-  if (!DESCRIPTORS || !isCallable(NativeConstructor)
-    || !(IS_WEAK || NativePrototype.forEach && !fails(function () { new NativeConstructor().entries().next(); }))
-  ) {
-    // create collection constructor
-    Constructor = common.getConstructor(wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER);
-    InternalMetadataModule.enable();
-  } else {
-    Constructor = wrapper(function (target, iterable) {
-      setInternalState(anInstance(target, Prototype), {
-        type: CONSTRUCTOR_NAME,
-        collection: new NativeConstructor()
-      });
-      if (iterable != undefined) iterate(iterable, target[ADDER], { that: target, AS_ENTRIES: IS_MAP });
-    });
-
-    var Prototype = Constructor.prototype;
-
-    var getInternalState = internalStateGetterFor(CONSTRUCTOR_NAME);
-
-    forEach(['add', 'clear', 'delete', 'forEach', 'get', 'has', 'set', 'keys', 'values', 'entries'], function (KEY) {
-      var IS_ADDER = KEY == 'add' || KEY == 'set';
-      if (KEY in NativePrototype && !(IS_WEAK && KEY == 'clear')) {
-        createNonEnumerableProperty(Prototype, KEY, function (a, b) {
-          var collection = getInternalState(this).collection;
-          if (!IS_ADDER && IS_WEAK && !isObject(a)) return KEY == 'get' ? undefined : false;
-          var result = collection[KEY](a === 0 ? 0 : a, b);
-          return IS_ADDER ? this : result;
-        });
-      }
-    });
-
-    IS_WEAK || defineProperty(Prototype, 'size', {
-      configurable: true,
-      get: function () {
-        return getInternalState(this).collection.size;
-      }
-    });
-  }
-
-  setToStringTag(Constructor, CONSTRUCTOR_NAME, false, true);
-
-  exported[CONSTRUCTOR_NAME] = Constructor;
-  $({ global: true, forced: true }, exported);
-
-  if (!IS_WEAK) common.setStrong(Constructor, CONSTRUCTOR_NAME, IS_MAP);
-
-  return Constructor;
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js-pure/internals/correct-prototype-getter.js":
 /*!*************************************************************************!*\
   !*** ./node_modules/core-js-pure/internals/correct-prototype-getter.js ***!
@@ -1189,24 +906,6 @@ module.exports = function (target, key, value, options) {
   if (options && options.enumerable) target[key] = value;
   else createNonEnumerableProperty(target, key, value);
   return target;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/define-built-ins.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/define-built-ins.js ***!
-  \*****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var defineBuiltIn = __webpack_require__(/*! ../internals/define-built-in */ "./node_modules/core-js-pure/internals/define-built-in.js");
-
-module.exports = function (target, src, options) {
-  for (var key in src) {
-    if (options && options.unsafe && target[key]) target[key] = src[key];
-    else defineBuiltIn(target, key, src[key], options);
-  } return target;
 };
 
 
@@ -1531,22 +1230,6 @@ module.exports = function (exec) {
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/internals/freezing.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/freezing.js ***!
-  \*********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js-pure/internals/fails.js");
-
-module.exports = !fails(function () {
-  // eslint-disable-next-line es-x/no-object-isextensible, es-x/no-object-preventextensions -- required for testing
-  return Object.isExtensible(Object.preventExtensions({}));
-});
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js-pure/internals/function-apply.js":
 /*!***************************************************************!*\
   !*** ./node_modules/core-js-pure/internals/function-apply.js ***!
@@ -1693,52 +1376,6 @@ var aFunction = function (variable) {
 module.exports = function (namespace, method) {
   return arguments.length < 2 ? aFunction(path[namespace]) || aFunction(global[namespace])
     : path[namespace] && path[namespace][method] || global[namespace] && global[namespace][method];
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/get-iterator-method.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/get-iterator-method.js ***!
-  \********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var classof = __webpack_require__(/*! ../internals/classof */ "./node_modules/core-js-pure/internals/classof.js");
-var getMethod = __webpack_require__(/*! ../internals/get-method */ "./node_modules/core-js-pure/internals/get-method.js");
-var isNullOrUndefined = __webpack_require__(/*! ../internals/is-null-or-undefined */ "./node_modules/core-js-pure/internals/is-null-or-undefined.js");
-var Iterators = __webpack_require__(/*! ../internals/iterators */ "./node_modules/core-js-pure/internals/iterators.js");
-var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js-pure/internals/well-known-symbol.js");
-
-var ITERATOR = wellKnownSymbol('iterator');
-
-module.exports = function (it) {
-  if (!isNullOrUndefined(it)) return getMethod(it, ITERATOR)
-    || getMethod(it, '@@iterator')
-    || Iterators[classof(it)];
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/get-iterator.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/get-iterator.js ***!
-  \*************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var call = __webpack_require__(/*! ../internals/function-call */ "./node_modules/core-js-pure/internals/function-call.js");
-var aCallable = __webpack_require__(/*! ../internals/a-callable */ "./node_modules/core-js-pure/internals/a-callable.js");
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js-pure/internals/an-object.js");
-var tryToString = __webpack_require__(/*! ../internals/try-to-string */ "./node_modules/core-js-pure/internals/try-to-string.js");
-var getIteratorMethod = __webpack_require__(/*! ../internals/get-iterator-method */ "./node_modules/core-js-pure/internals/get-iterator-method.js");
-
-var $TypeError = TypeError;
-
-module.exports = function (argument, usingIterator) {
-  var iteratorMethod = arguments.length < 2 ? getIteratorMethod(argument) : usingIterator;
-  if (aCallable(iteratorMethod)) return anObject(call(iteratorMethod, argument));
-  throw $TypeError(tryToString(argument) + ' is not iterable');
 };
 
 
@@ -1902,105 +1539,6 @@ module.exports = store.inspectSource;
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/internals/internal-metadata.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/internal-metadata.js ***!
-  \******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js-pure/internals/export.js");
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js-pure/internals/function-uncurry-this.js");
-var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_modules/core-js-pure/internals/hidden-keys.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js-pure/internals/is-object.js");
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "./node_modules/core-js-pure/internals/has-own-property.js");
-var defineProperty = (__webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js-pure/internals/object-define-property.js").f);
-var getOwnPropertyNamesModule = __webpack_require__(/*! ../internals/object-get-own-property-names */ "./node_modules/core-js-pure/internals/object-get-own-property-names.js");
-var getOwnPropertyNamesExternalModule = __webpack_require__(/*! ../internals/object-get-own-property-names-external */ "./node_modules/core-js-pure/internals/object-get-own-property-names-external.js");
-var isExtensible = __webpack_require__(/*! ../internals/object-is-extensible */ "./node_modules/core-js-pure/internals/object-is-extensible.js");
-var uid = __webpack_require__(/*! ../internals/uid */ "./node_modules/core-js-pure/internals/uid.js");
-var FREEZING = __webpack_require__(/*! ../internals/freezing */ "./node_modules/core-js-pure/internals/freezing.js");
-
-var REQUIRED = false;
-var METADATA = uid('meta');
-var id = 0;
-
-var setMetadata = function (it) {
-  defineProperty(it, METADATA, { value: {
-    objectID: 'O' + id++, // object ID
-    weakData: {}          // weak collections IDs
-  } });
-};
-
-var fastKey = function (it, create) {
-  // return a primitive with prefix
-  if (!isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
-  if (!hasOwn(it, METADATA)) {
-    // can't set metadata to uncaught frozen object
-    if (!isExtensible(it)) return 'F';
-    // not necessary to add metadata
-    if (!create) return 'E';
-    // add missing metadata
-    setMetadata(it);
-  // return object ID
-  } return it[METADATA].objectID;
-};
-
-var getWeakData = function (it, create) {
-  if (!hasOwn(it, METADATA)) {
-    // can't set metadata to uncaught frozen object
-    if (!isExtensible(it)) return true;
-    // not necessary to add metadata
-    if (!create) return false;
-    // add missing metadata
-    setMetadata(it);
-  // return the store of weak collections IDs
-  } return it[METADATA].weakData;
-};
-
-// add metadata on freeze-family methods calling
-var onFreeze = function (it) {
-  if (FREEZING && REQUIRED && isExtensible(it) && !hasOwn(it, METADATA)) setMetadata(it);
-  return it;
-};
-
-var enable = function () {
-  meta.enable = function () { /* empty */ };
-  REQUIRED = true;
-  var getOwnPropertyNames = getOwnPropertyNamesModule.f;
-  var splice = uncurryThis([].splice);
-  var test = {};
-  test[METADATA] = 1;
-
-  // prevent exposing of metadata key
-  if (getOwnPropertyNames(test).length) {
-    getOwnPropertyNamesModule.f = function (it) {
-      var result = getOwnPropertyNames(it);
-      for (var i = 0, length = result.length; i < length; i++) {
-        if (result[i] === METADATA) {
-          splice(result, i, 1);
-          break;
-        }
-      } return result;
-    };
-
-    $({ target: 'Object', stat: true, forced: true }, {
-      getOwnPropertyNames: getOwnPropertyNamesExternalModule.f
-    });
-  }
-};
-
-var meta = module.exports = {
-  enable: enable,
-  fastKey: fastKey,
-  getWeakData: getWeakData,
-  onFreeze: onFreeze
-};
-
-hiddenKeys[METADATA] = true;
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js-pure/internals/internal-state.js":
 /*!***************************************************************!*\
   !*** ./node_modules/core-js-pure/internals/internal-state.js ***!
@@ -2075,26 +1613,6 @@ module.exports = {
   has: has,
   enforce: enforce,
   getterFor: getterFor
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/is-array-iterator-method.js":
-/*!*************************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/is-array-iterator-method.js ***!
-  \*************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js-pure/internals/well-known-symbol.js");
-var Iterators = __webpack_require__(/*! ../internals/iterators */ "./node_modules/core-js-pure/internals/iterators.js");
-
-var ITERATOR = wellKnownSymbol('iterator');
-var ArrayPrototype = Array.prototype;
-
-// check on default Array iterator
-module.exports = function (it) {
-  return it !== undefined && (Iterators.Array === it || ArrayPrototype[ITERATOR] === it);
 };
 
 
@@ -2293,117 +1811,6 @@ module.exports = USE_SYMBOL_AS_UID ? function (it) {
 } : function (it) {
   var $Symbol = getBuiltIn('Symbol');
   return isCallable($Symbol) && isPrototypeOf($Symbol.prototype, $Object(it));
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/iterate.js":
-/*!********************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/iterate.js ***!
-  \********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var bind = __webpack_require__(/*! ../internals/function-bind-context */ "./node_modules/core-js-pure/internals/function-bind-context.js");
-var call = __webpack_require__(/*! ../internals/function-call */ "./node_modules/core-js-pure/internals/function-call.js");
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js-pure/internals/an-object.js");
-var tryToString = __webpack_require__(/*! ../internals/try-to-string */ "./node_modules/core-js-pure/internals/try-to-string.js");
-var isArrayIteratorMethod = __webpack_require__(/*! ../internals/is-array-iterator-method */ "./node_modules/core-js-pure/internals/is-array-iterator-method.js");
-var lengthOfArrayLike = __webpack_require__(/*! ../internals/length-of-array-like */ "./node_modules/core-js-pure/internals/length-of-array-like.js");
-var isPrototypeOf = __webpack_require__(/*! ../internals/object-is-prototype-of */ "./node_modules/core-js-pure/internals/object-is-prototype-of.js");
-var getIterator = __webpack_require__(/*! ../internals/get-iterator */ "./node_modules/core-js-pure/internals/get-iterator.js");
-var getIteratorMethod = __webpack_require__(/*! ../internals/get-iterator-method */ "./node_modules/core-js-pure/internals/get-iterator-method.js");
-var iteratorClose = __webpack_require__(/*! ../internals/iterator-close */ "./node_modules/core-js-pure/internals/iterator-close.js");
-
-var $TypeError = TypeError;
-
-var Result = function (stopped, result) {
-  this.stopped = stopped;
-  this.result = result;
-};
-
-var ResultPrototype = Result.prototype;
-
-module.exports = function (iterable, unboundFunction, options) {
-  var that = options && options.that;
-  var AS_ENTRIES = !!(options && options.AS_ENTRIES);
-  var IS_RECORD = !!(options && options.IS_RECORD);
-  var IS_ITERATOR = !!(options && options.IS_ITERATOR);
-  var INTERRUPTED = !!(options && options.INTERRUPTED);
-  var fn = bind(unboundFunction, that);
-  var iterator, iterFn, index, length, result, next, step;
-
-  var stop = function (condition) {
-    if (iterator) iteratorClose(iterator, 'normal', condition);
-    return new Result(true, condition);
-  };
-
-  var callFn = function (value) {
-    if (AS_ENTRIES) {
-      anObject(value);
-      return INTERRUPTED ? fn(value[0], value[1], stop) : fn(value[0], value[1]);
-    } return INTERRUPTED ? fn(value, stop) : fn(value);
-  };
-
-  if (IS_RECORD) {
-    iterator = iterable.iterator;
-  } else if (IS_ITERATOR) {
-    iterator = iterable;
-  } else {
-    iterFn = getIteratorMethod(iterable);
-    if (!iterFn) throw $TypeError(tryToString(iterable) + ' is not iterable');
-    // optimisation for array iterators
-    if (isArrayIteratorMethod(iterFn)) {
-      for (index = 0, length = lengthOfArrayLike(iterable); length > index; index++) {
-        result = callFn(iterable[index]);
-        if (result && isPrototypeOf(ResultPrototype, result)) return result;
-      } return new Result(false);
-    }
-    iterator = getIterator(iterable, iterFn);
-  }
-
-  next = IS_RECORD ? iterable.next : iterator.next;
-  while (!(step = call(next, iterator)).done) {
-    try {
-      result = callFn(step.value);
-    } catch (error) {
-      iteratorClose(iterator, 'throw', error);
-    }
-    if (typeof result == 'object' && result && isPrototypeOf(ResultPrototype, result)) return result;
-  } return new Result(false);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/iterator-close.js":
-/*!***************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/iterator-close.js ***!
-  \***************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var call = __webpack_require__(/*! ../internals/function-call */ "./node_modules/core-js-pure/internals/function-call.js");
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js-pure/internals/an-object.js");
-var getMethod = __webpack_require__(/*! ../internals/get-method */ "./node_modules/core-js-pure/internals/get-method.js");
-
-module.exports = function (iterator, kind, value) {
-  var innerResult, innerError;
-  anObject(iterator);
-  try {
-    innerResult = getMethod(iterator, 'return');
-    if (!innerResult) {
-      if (kind === 'throw') throw value;
-      return value;
-    }
-    innerResult = call(innerResult, iterator);
-  } catch (error) {
-    innerError = true;
-    innerResult = error;
-  }
-  if (kind === 'throw') throw value;
-  if (innerError) throw innerResult;
-  anObject(innerResult);
-  return value;
 };
 
 
@@ -3023,32 +2430,6 @@ module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O
     return constructor.prototype;
   } return object instanceof $Object ? ObjectPrototype : null;
 };
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/object-is-extensible.js":
-/*!*********************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/object-is-extensible.js ***!
-  \*********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js-pure/internals/fails.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js-pure/internals/is-object.js");
-var classof = __webpack_require__(/*! ../internals/classof-raw */ "./node_modules/core-js-pure/internals/classof-raw.js");
-var ARRAY_BUFFER_NON_EXTENSIBLE = __webpack_require__(/*! ../internals/array-buffer-non-extensible */ "./node_modules/core-js-pure/internals/array-buffer-non-extensible.js");
-
-// eslint-disable-next-line es-x/no-object-isextensible -- safe
-var $isExtensible = Object.isExtensible;
-var FAILS_ON_PRIMITIVES = fails(function () { $isExtensible(1); });
-
-// `Object.isExtensible` method
-// https://tc39.es/ecma262/#sec-object.isextensible
-module.exports = (FAILS_ON_PRIMITIVES || ARRAY_BUFFER_NON_EXTENSIBLE) ? function isExtensible(it) {
-  if (!isObject(it)) return false;
-  if (ARRAY_BUFFER_NON_EXTENSIBLE && classof(it) == 'ArrayBuffer') return false;
-  return $isExtensible ? $isExtensible(it) : true;
-} : $isExtensible;
 
 
 /***/ }),
@@ -4174,17 +3555,6 @@ $({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/modules/es.object.to-string.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/core-js-pure/modules/es.object.to-string.js ***!
-  \******************************************************************/
-/***/ (() => {
-
-// empty
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js-pure/modules/es.symbol.constructor.js":
 /*!********************************************************************!*\
   !*** ./node_modules/core-js-pure/modules/es.symbol.constructor.js ***!
@@ -4523,38 +3893,6 @@ $({ target: 'Symbol', stat: true, forced: !NATIVE_SYMBOL_REGISTRY }, {
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/modules/es.weak-set.constructor.js":
-/*!**********************************************************************!*\
-  !*** ./node_modules/core-js-pure/modules/es.weak-set.constructor.js ***!
-  \**********************************************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var collection = __webpack_require__(/*! ../internals/collection */ "./node_modules/core-js-pure/internals/collection.js");
-var collectionWeak = __webpack_require__(/*! ../internals/collection-weak */ "./node_modules/core-js-pure/internals/collection-weak.js");
-
-// `WeakSet` constructor
-// https://tc39.es/ecma262/#sec-weakset-constructor
-collection('WeakSet', function (init) {
-  return function WeakSet() { return init(this, arguments.length ? arguments[0] : undefined); };
-}, collectionWeak);
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/modules/es.weak-set.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/core-js-pure/modules/es.weak-set.js ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-// TODO: Remove this module from `core-js@4` since it's replaced to module below
-__webpack_require__(/*! ../modules/es.weak-set.constructor */ "./node_modules/core-js-pure/modules/es.weak-set.constructor.js");
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js-pure/modules/web.dom-collections.iterator.js":
 /*!***************************************************************************!*\
   !*** ./node_modules/core-js-pure/modules/web.dom-collections.iterator.js ***!
@@ -4754,20 +4092,6 @@ module.exports = parent;
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/stable/weak-set/index.js":
-/*!************************************************************!*\
-  !*** ./node_modules/core-js-pure/stable/weak-set/index.js ***!
-  \************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var parent = __webpack_require__(/*! ../../es/weak-set */ "./node_modules/core-js-pure/es/weak-set/index.js");
-__webpack_require__(/*! ../../modules/web.dom-collections.iterator */ "./node_modules/core-js-pure/modules/web.dom-collections.iterator.js");
-
-module.exports = parent;
-
-
-/***/ }),
-
 /***/ "electron-serve":
 /*!*********************************!*\
   !*** external "electron-serve" ***!
@@ -4911,16 +4235,6 @@ module.exports = __webpack_require__(/*! core-js-pure/stable/object/keys */ "./n
 
 /***/ }),
 
-/***/ "./node_modules/@babel/runtime-corejs3/core-js-stable/weak-set.js":
-/*!************************************************************************!*\
-  !*** ./node_modules/@babel/runtime-corejs3/core-js-stable/weak-set.js ***!
-  \************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-module.exports = __webpack_require__(/*! core-js-pure/stable/weak-set */ "./node_modules/core-js-pure/stable/weak-set/index.js");
-
-/***/ }),
-
 /***/ "./node_modules/@babel/runtime-corejs3/core-js/object/define-property.js":
 /*!*******************************************************************************!*\
   !*** ./node_modules/@babel/runtime-corejs3/core-js/object/define-property.js ***!
@@ -5034,16 +4348,13 @@ var __webpack_exports__ = {};
   !*** ./main/background.js ***!
   \****************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_weak_set__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/weak-set */ "./node_modules/@babel/runtime-corejs3/core-js-stable/weak-set.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_weak_set__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_weak_set__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/json/stringify */ "./node_modules/@babel/runtime-corejs3/core-js-stable/json/stringify.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! electron */ "electron");
-/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var electron_serve__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! electron-serve */ "electron-serve");
-/* harmony import */ var electron_serve__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(electron_serve__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./helpers */ "./main/helpers/index.js");
-
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/json/stringify */ "./node_modules/@babel/runtime-corejs3/core-js-stable/json/stringify.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! electron */ "electron");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var electron_serve__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! electron-serve */ "electron-serve");
+/* harmony import */ var electron_serve__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(electron_serve__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./helpers */ "./main/helpers/index.js");
 
 
 
@@ -5051,16 +4362,16 @@ __webpack_require__.r(__webpack_exports__);
 const isProd = "development" === 'production';
 
 if (isProd) {
-  electron_serve__WEBPACK_IMPORTED_MODULE_3___default()({
+  electron_serve__WEBPACK_IMPORTED_MODULE_2___default()({
     directory: 'app'
   });
 } else {
-  electron__WEBPACK_IMPORTED_MODULE_2__.app.setPath('userData', `${electron__WEBPACK_IMPORTED_MODULE_2__.app.getPath('userData')} (development)`);
+  electron__WEBPACK_IMPORTED_MODULE_1__.app.setPath('userData', `${electron__WEBPACK_IMPORTED_MODULE_1__.app.getPath('userData')} (development)`);
 }
 
 (async () => {
-  await electron__WEBPACK_IMPORTED_MODULE_2__.app.whenReady();
-  const mainWindow = (0,_helpers__WEBPACK_IMPORTED_MODULE_4__.createWindow)('main', {
+  await electron__WEBPACK_IMPORTED_MODULE_1__.app.whenReady();
+  const mainWindow = (0,_helpers__WEBPACK_IMPORTED_MODULE_3__.createWindow)('main', {
     width: 1000,
     height: 600
   });
@@ -5074,29 +4385,15 @@ if (isProd) {
   }
 })();
 
-electron__WEBPACK_IMPORTED_MODULE_2__.app.on('window-all-closed', () => {
-  electron__WEBPACK_IMPORTED_MODULE_2__.app.quit();
+electron__WEBPACK_IMPORTED_MODULE_1__.app.on('window-all-closed', () => {
+  electron__WEBPACK_IMPORTED_MODULE_1__.app.quit();
 });
-
-const replacerFunc = () => {
-  const visited = new (_babel_runtime_corejs3_core_js_stable_weak_set__WEBPACK_IMPORTED_MODULE_0___default())();
-  return (key, value) => {
-    if (typeof value === "object" && value !== null) {
-      if (visited.has(value)) {
-        return;
-      }
-
-      visited.add(value);
-    }
-
-    return value;
-  };
-};
-
-electron__WEBPACK_IMPORTED_MODULE_2__.ipcMain.handle("login", (email, password) => {
+electron__WEBPACK_IMPORTED_MODULE_1__.ipcMain.handle("login", (obj, data) => {
   try {
     console.log("Inside the login function 2");
-    const request = electron__WEBPACK_IMPORTED_MODULE_2__.net.request({
+    console.log(data);
+    console.log(_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0___default()(data));
+    const request = electron__WEBPACK_IMPORTED_MODULE_1__.net.request({
       method: 'POST',
       protocol: 'https:',
       hostname: 'api.pybots.ai',
@@ -5104,12 +4401,10 @@ electron__WEBPACK_IMPORTED_MODULE_2__.ipcMain.handle("login", (email, password) 
       headers: {
         'Content-Type': 'application/json'
       },
-      body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_1___default()({
-        "email": email,
-        "password": password
-      }, replacerFunc())
-    });
-    request.on('response', response => {
+      body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0___default()({
+        data
+      })
+    }) ?? request.on('response', response => {
       console.log(`STATUS: ${response.statusCode}`);
       console.log(`HEADERS: ${response.headers}`);
       response.on('data', chunk => {
@@ -5120,6 +4415,7 @@ electron__WEBPACK_IMPORTED_MODULE_2__.ipcMain.handle("login", (email, password) 
       });
     });
     request.end();
+    return "success from login function";
   } catch (error) {
     console.log("error occured" + error);
   }
