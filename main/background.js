@@ -70,5 +70,35 @@ ipcMain.handle("login" , (obj ,data) => {
           console.log("error occured" + error);
       }
 
-  
-})
+  // if email and password are correct
+  if (email ==='mmv@gmail.com' && password === 'murali') {
+    event.reply('login', {status: true, message: 'Login Success'});
+    console.log('Login Success, backgroud.js');
+  } else {
+    event.reply('login', {status: false, message: 'Login Failed'});
+    console.log('Login Failed, backgroud.js');
+  }
+  // else
+  // event.reply('login-reply', 'error');
+
+  // const url = 'https://api.example.com/login';
+  // const options = {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({
+  //     email,
+  //     password,
+  //   }),
+  // };
+  // const request = net.request(url);
+  // request.on('response', (response) => {
+  //   response.on('data', (chunk) => {
+  //     event.sender.send('login-response', chunk.toString());
+  //   });
+  // }
+  // );
+  // request.write(JSON.stringify(options.body));
+  // request.end();
+});
