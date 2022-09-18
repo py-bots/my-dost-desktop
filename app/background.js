@@ -4404,7 +4404,9 @@ electron__WEBPACK_IMPORTED_MODULE_1__.ipcMain.handle("login", (obj, data) => {
       body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0___default()({
         data
       })
-    }) ?? request.on('response', response => {
+    }); //solve the problem of 400 
+
+    request.on('response', response => {
       console.log(`STATUS: ${response.statusCode}`);
       console.log(`HEADERS: ${response.headers}`);
       response.on('data', chunk => {
