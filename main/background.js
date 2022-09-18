@@ -51,7 +51,7 @@ ipcMain.handle("login" , (obj ,data) => {
               })
               
           })
-          //solve the problem of 400 
+          //TODO:solve the problem of 400 
           request.on('response', (response) => {
               console.log(`STATUS: ${response.statusCode}`)
               console.log(`HEADERS: ${response.headers}`)
