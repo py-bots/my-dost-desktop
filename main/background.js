@@ -1,7 +1,8 @@
-
 import { app, ipcMain , net } from 'electron';
 import serve from 'electron-serve';
 import { createWindow } from './helpers';
+const { autoUpdater } = require('electron-updater');
+
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -30,6 +31,22 @@ if (isProd) {
 
 app.on('window-all-closed', () => {
   app.quit();
+});
+
+autoUpdater.on('update-available', () => {
+  window.webContents.send('update_available');
+});
+autoUpdater.on('update-downloaded', () => {
+  window.webContents.send('update_downloaded');
+});
+
+
+ipcMain.handle('app_version', (event) => {
+  return app.getVersion();
+});
+
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
 });
 
 ipcMain.handle("login" , (obj ,data) => {

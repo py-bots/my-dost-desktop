@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import login from '../components/server-components.js';
+import {login} from '../components/server-components.js';
 
 
 function LoginForm(handleLogin, setEmail, setPassword) {

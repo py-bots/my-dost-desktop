@@ -2,6 +2,7 @@ import {
   screen,
   BrowserWindow,
 } from 'electron';
+const { autoUpdater } = require('electron-updater');
 import Store from 'electron-store';
 
 export default function createWindow(windowName, options) {
@@ -77,6 +78,9 @@ export default function createWindow(windowName, options) {
       ...options.webPreferences,
     },
   
+  });
+  win.once('ready-to-show', () => {
+    autoUpdater.checkForUpdatesAndNotify();
   });
 
   win.on('close', saveState);
