@@ -1,6 +1,8 @@
 appId: com.example.my-dost
 productName: My-DOST
 copyright: Copyright © 2022 PyBOTs LLC
+custom: 
+  secrets: ${file(token.json)}
 directories:
   output: dist
   buildResources: resources
@@ -11,5 +13,5 @@ files:
       - app
 publish: 
   provider: github
-  token: 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
+  token: ${self:custom.secrets.GH_TOKEN}
 
