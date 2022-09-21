@@ -3,15 +3,18 @@ import Head from 'next/head';
 import Link from 'next/link';
 import {version_info} from '../components/server-components.js';
 import { useEffect } from 'react';
-import { ipcRenderer } from 'electron/renderer';
-function closeNotification() {
-  document.getElementById('notification').classList.add('hidden');
-}
-function restartApp() {
-  ipcRenderer.send('restart_app');
+import { ipcRenderer } from 'electron';
+
+
+//TODO: create react component instead of using inplace HTML, create new version and test auto updater
+function notificationWindow()
+{
+
+
 }
 
- function getVersion()  
+
+function getVersion()  
 {
   const [version, setVersion] = React.useState('');
   const [error, setError] = React.useState('');
@@ -67,7 +70,14 @@ function Home() {
       <Head>
         <title>Home - Nextron (with-javascript-tailwindcss)</title>
       </Head>
-
+      <script>
+      function closeNotification() {
+  document.getElementById('notification').classList.add('hidden')
+}
+function restartApp() {
+  ipcRenderer.send('restart_app')
+}
+</script>
       <p id="version"></p>
  
       <div className='grid grid-col-1 text-2xl w-full text-center'>
