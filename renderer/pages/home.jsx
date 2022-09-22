@@ -9,8 +9,47 @@ import { ipcRenderer } from 'electron';
 //TODO: create react component instead of using inplace HTML, create new version and test auto updater
 function notificationWindow()
 {
+  var [hiddenWindow,SetHiddenWindow] = React.useState(true) ;
+  var [notiftext , setNotifText] = React.useState('') ;
+  var [hiddenButton , setHiddenButton] = React.useState('') ;
 
+  useEffect(() => {
+    ipcRenderer.on('update_available', () => {
+      SetHiddenWindow(false);
+      setNotifText('A new update is available. Downloading now...');
+   
+      return() => 
+      {
+        ipcRenderer.removeAllListeners('update_available');
+      }
+    });
 
+    ipcRenderer.on('update_downloaded', () => {
+      ipcRenderer.removeAllListeners('update_downloaded');
+      setNotifText('Update Downloaded. It will be installed on restart. Restart now?');
+      setHiddenButton(false);
+      SetHiddenWindow(false); 
+      // message.innerText = 'Update Downloaded. It will be installed on restart. Restart now?';
+      // restartButton.classList.remove('hidden');
+      // notification.classList.remove('hidden');
+
+      return() =>
+      {
+        ipcRenderer.removeAllListeners('update_available');
+      }
+    });
+   }, []);
+ return (
+  <div id="notification" className="notifwindow" hidden = {hiddenWindow}>
+  <p  {...notiftext} ></p>
+  <button id="close-button" onClick="closeNotification()">
+    Close
+  </button>
+  <button id="restart-button" onClick="restartApp()" className="notifwindow" hidden = {hiddenButton}>
+    Restart
+  </button>
+</div>
+ )
 }
 
 
@@ -39,45 +78,14 @@ function getVersion()
 }
 
 function Home() {
-  const notification = document.getElementById('notification');
-  const message = document.getElementById('message');
-  const restartButton = document.getElementById('restart-button');
-  useEffect(() => {
-    ipcRenderer.on('update_available', () => {
-      
-      message.innerText = 'A new update is available. Downloading now...';
-      notification.classList.remove('hidden');
-      return() => 
-      {
-        ipcRenderer.removeAllListeners('update_available');
-      }
-    });
 
-    ipcRenderer.on('update_downloaded', () => {
-      ipcRenderer.removeAllListeners('update_downloaded');
-      message.innerText = 'Update Downloaded. It will be installed on restart. Restart now?';
-      restartButton.classList.remove('hidden');
-      notification.classList.remove('hidden');
-
-      return() =>
-      {
-        ipcRenderer.removeAllListeners('update_available');
-      }
-    });
-   }, []);
+  
   return (
     <React.Fragment>
       <Head>
         <title>Home - Nextron (with-javascript-tailwindcss)</title>
       </Head>
-      <script>
-      function closeNotification() {
-  document.getElementById('notification').classList.add('hidden')
-}
-function restartApp() {
-  ipcRenderer.send('restart_app')
-}
-</script>
+
       <p id="version"></p>
  
       <div className='grid grid-col-1 text-2xl w-full text-center'>
@@ -100,17 +108,8 @@ function restartApp() {
         <Link href='/login'>
           <a className='btn-blue'>Go to Login</a>
         </Link>
-
       </div>
-      <div id="notification" className="hidden">
-  <p id="message"></p>
-  <button id="close-button" onClick="closeNotification()">
-    Close
-  </button>
-  <button id="restart-button" onClick="restartApp()" className="hidden">
-    Restart
-  </button>
-</div>
+    
       {getVersion()}
     </React.Fragment>
   );

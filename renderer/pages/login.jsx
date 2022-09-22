@@ -38,7 +38,7 @@ function Login() {
     // validate the form
     if (email && password) {
     const resp =  await login(email, password);
-    console.log("response1221 "+ resp)
+    console.log("response1221 "+ resp);
     }
   };
 
