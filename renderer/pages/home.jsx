@@ -95,7 +95,7 @@ function Home() {
         <span>⚡ Electron ⚡</span>
         <span>+</span>
         <span>Next.js</span>
-        <span>+</span>
+        <span>+++++</span>
         <span>tailwindcss</span>
         <span>=</span>
         <span>💕 </span>
