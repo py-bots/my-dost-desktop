@@ -34,9 +34,11 @@ app.on('window-all-closed', () => {
 });
 
 autoUpdater.on('update-available', () => {
+  console.log('update available');
   window.webContents.send('update_available');
 });
 autoUpdater.on('update-downloaded', () => {
+  console.log('update downloaded');
   window.webContents.send('update_downloaded');
 });
 

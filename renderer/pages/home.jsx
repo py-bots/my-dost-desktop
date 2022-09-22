@@ -11,7 +11,7 @@ function notificationWindow()
 {
   var [hiddenWindow,SetHiddenWindow] = React.useState(true) ;
   var [notiftext , setNotifText] = React.useState('') ;
-  var [hiddenButton , setHiddenButton] = React.useState('') ;
+  var [hiddenButton , setHiddenButton] = React.useState(true) ;
 
   useEffect(() => {
     ipcRenderer.on('update_available', () => {
@@ -39,16 +39,18 @@ function notificationWindow()
       }
     });
    }, []);
+  
  return (
   <div id="notification" className="notifwindow" hidden = {hiddenWindow}>
   <p  {...notiftext} ></p>
-  <button id="close-button" onClick="closeNotification()">
+  <button id="close-button" onClick={() => SetHiddenWindow = true}>
     Close
   </button>
-  <button id="restart-button" onClick="restartApp()" className="notifwindow" hidden = {hiddenButton}>
+  <button id="restart-button" onClick={() => ipcRenderer.send('restart_app')} className="notifwindow" hidden = {hiddenButton}>
     Restart
   </button>
 </div>
+
  )
 }
 
@@ -85,13 +87,13 @@ function Home() {
       <Head>
         <title>Home - Nextron (with-javascript-tailwindcss)</title>
       </Head>
-
+      {notificationWindow()}
       <p id="version"></p>
  
       <div className='grid grid-col-1 text-2xl w-full text-center'>
         <img className='ml-auto mr-auto' src='/images/logo.png' />
         <span>⚡ Electron ⚡</span>
-        <span>++++++</span>
+        <span>+</span>
         <span>Next.js</span>
         <span>+</span>
         <span>tailwindcss</span>
