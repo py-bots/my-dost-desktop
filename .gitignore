@@ -128,4 +128,5 @@ token.json
 app/*
 app/*.js
 app/
+electron-builder.yml
 
