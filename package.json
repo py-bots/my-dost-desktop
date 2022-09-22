@@ -2,7 +2,7 @@
     "private": true,
     "name": "My-DOST",
     "description": "Advanced Python Made Simple",
-    "version": "1.0.7",
+    "version": "1.0.9",
     "author": "Murali M V P <mmv@pybots.ai>",
     "main": "app/background.js",
     "scripts": {
