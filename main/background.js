@@ -2,7 +2,7 @@ import { app, dialog, ipcMain , net } from 'electron';
 import serve from 'electron-serve';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
-
+const storageAct = require('./helpers/storageActivities.js');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -18,7 +18,7 @@ if (isProd) {
     width: 1000,
     height: 600,
   });
-
+  
   if (isProd) {
     await mainWindow.loadURL('app://./home.html');
   } else {
@@ -27,6 +27,8 @@ if (isProd) {
     mainWindow.webContents.openDevTools();
     
   }
+  //init db table 
+  storageAct.createBotTable();
 })();
 
 app.on('window-all-closed', () => {
@@ -62,6 +64,17 @@ autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
 ipcMain.handle('app_version', (event) => {
   return app.getVersion();
 });
+
+ipcMain.handle('DBgetAllBots', (event) => 
+{
+  return storageAct.getAllBots(); 
+});
+ipcMain.handle('DBaddBot', (event, args) =>
+{  
+  return storageAct.addBot(args.bot);
+});
+
+
 
 ipcMain.on('restart_app', () => {
   autoUpdater.quitAndInstall();

@@ -110,6 +110,9 @@ function Home() {
         <Link href='/login'>
           <a className='btn-blue'>Go to Login</a>
         </Link>
+        <Link href='/botview'>
+          <a className='btn-blue'>Go to Bot View</a>
+        </Link>
       </div>
     
       {getVersion()}
