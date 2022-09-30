@@ -1,26 +1,34 @@
-import React from 'react';
+import React, { version } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import {getAllBots,addBot} from '../components/db-components.js';
+import { REACT_LOADABLE_MANIFEST } from 'next/dist/shared/lib/constants.js';
 
 
-function BotDisplay()
+function BotDisplay(reloadtrigger)
 {
-    const [bots, setBots] = React.useState([]);
+    const [botsAct, setBots] = React.useState([]);
+    const [error, setError] = React.useState('');
 
     React.useEffect(() => {
         getAllBots().then(bots => {
-            console.log("Inside Use effect for bot display" + bots);
-            setBots(bots);
+            console.log("bots "+ bots);
+            if (bots.error) {
+                setError(bots.error);
+                setBots( ["error"]);
+              } else {
+                setBots(bots);
+              }
+           
         });
-    })
+    },[/*reloadtrigger // although this just keeps triggering timely*/]);
 
    return (
     <React.Fragment>
       <ul className="list-group">
-        {this.state.listitems.map(bots => (
+        {botsAct.map(botsAct => (
           <li className="list-group-item list-group-item-primary">
-            {bots}
+            {botsAct.id + "  " + botsAct.name}
           </li>
         ))}
       </ul>
@@ -28,7 +36,7 @@ function BotDisplay()
   );
 }
 
-function addBotForm(handleAddBot, setName, setId)
+function addBotForm(handleAddBot, setName, setId  )
 {
     return <form className='mt-1 w-full flex-wrap flex justify-center' onSubmit={handleAddBot}>
         <input
@@ -52,15 +60,26 @@ function addBotForm(handleAddBot, setName, setId)
         </button>
     </form>;
 }
-function BotView()
+function BotView(reloadtrigger)
 {
     const [name, setName] = React.useState('');
     const [id, setId] = React.useState('');
+    var reloadtrigger = React.useState(false);
     const handleAddBot = async (e) =>  {
-        e.preventDefault();
+       
         if (name && id) {
             const resp =  await addBot({name, id});
-            console.log("response1331 "+ resp);
+            if(resp)
+            {
+                setName('');
+                setId('');
+                console.log("reloadtrigger changed");
+                reloadtrigger = !reloadtrigger;
+                
+                
+            }
+            
+            
         }
     };
 
@@ -77,8 +96,8 @@ function BotView()
                     <a className='btn-blue'>Go to Editor</a>
                 </Link>
             </div>
-            {BotDisplay()}
-            {addBotForm(handleAddBot, setName, setId)}
+            {BotDisplay(reloadtrigger)}
+            {addBotForm(handleAddBot, setName, setId )}
         </React.Fragment>
     );
 }
