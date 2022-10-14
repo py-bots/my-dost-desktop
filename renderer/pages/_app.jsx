@@ -1,11 +1,44 @@
 import React from 'react';
-import Layout from "../layout";
+import PropTypes from "prop-types";
+import Head from "next/head";
+import { ThemeProvider, createTheme } from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+
 import '../styles/globals.css';
 
-function MyApp({ Component, pageProps }) {
-  return (<Layout>
-    <Component {...pageProps} />
-  </Layout>);
+
+export default function MyApp(props) {
+  const { Component, pageProps } = props;
+
+  React.useEffect(() => {
+    // Remove the server-side injected CSS.
+    const jssStyles = document.querySelector("#jss-server-side");
+    if (jssStyles && jssStyles.parentElement) {
+      jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+
+  const muiTheme = createTheme();
+
+  return (
+    <React.Fragment>
+      <Head>
+        <title>Test2</title>
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width"
+        />
+      </Head>
+      <ThemeProvider theme={muiTheme}>
+        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+        <CssBaseline />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </React.Fragment>
+  );
 }
 
-export default MyApp;
+MyApp.propTypes = {
+  Component: PropTypes.elementType.isRequired,
+  pageProps: PropTypes.object.isRequired,
+};

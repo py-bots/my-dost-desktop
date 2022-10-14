@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import {login} from '../components/server-components.js';
+import { login } from '../components/server-components.js';
 
 
 function LoginForm(handleLogin, setEmail, setPassword) {
@@ -32,13 +32,13 @@ function Login() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const  handleLogin = async (e) =>  {
+  const handleLogin = async (e) => {
     // console.log('login');
-     e.preventDefault();
+    e.preventDefault();
     // validate the form
     if (email && password) {
-    const resp =  await login(email, password);
-    console.log("response1221 "+ resp);
+      const resp = await login(email, password);
+      console.log("response1221 " + resp);
     }
   };
 
@@ -47,7 +47,7 @@ function Login() {
       <Head>
         <title>Login</title>
       </Head>
-    
+
       <div className='mt-1 w-full flex-wrap flex justify-center'>
         <Link href='/next'>
           <a className='btn-blue'>Go to next page</a>

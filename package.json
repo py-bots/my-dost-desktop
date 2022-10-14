@@ -1,6 +1,6 @@
 {
     "private": true,
-    "name": "My-DOST",
+    "name": "dost",
     "description": "Advanced Python Made Simple",
     "version": "1.0.10",
     "author": "Murali M V P <mmv@pybots.ai>",
@@ -22,8 +22,12 @@
         "electron-updater": "^5.2.1",
         "react-blockly": "^7.0.1",
         "react-datepicker": "^4.8.0",
+        "react-icons": "^4.4.0",
         "react-logger": "^1.1.0",
-        "sqlite-electron": "^2.0.5"
+        "sqlite-electron": "^2.0.5",
+        "@mui/material": "^5.2.5",
+        "@emotion/react": "^11.7.1",
+        "@emotion/styled": "^11.6.0"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.7",

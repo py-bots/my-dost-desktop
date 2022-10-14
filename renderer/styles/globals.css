@@ -3,11 +3,7 @@
 @tailwind utilities;
 
 
-@layer components {
-  .btn-blue {
-    @apply text-white font-bold px-4 py-2 rounded bg-blue-600 hover:bg-blue-500;
-  }
-}
+
 
 .blocklyScrollbarHandle {
   visibility: hidden;
@@ -23,6 +19,7 @@
   background-color: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
+
 .hidden {
   display: none;
 }
