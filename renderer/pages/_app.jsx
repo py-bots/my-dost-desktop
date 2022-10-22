@@ -1,11 +1,10 @@
 import React from 'react';
-import Layout from "../layout";
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
-  return (<Layout>
+  return (
     <Component {...pageProps} />
-  </Layout>);
+  );
 }
 
 export default MyApp;
