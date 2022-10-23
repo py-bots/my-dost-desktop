@@ -8,12 +8,12 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 
 export default function BasicTable({ data, handleDelete, handleEdit, handleCopy }) {
-    function createData(sno, title, description, time, id) {
-        return { sno, title, description, time, id };
+    function createData(sno, name, description, timeStamp, id) {
+        return { sno, name, description, timeStamp, id };
     }
 
     const rows = data.map((item, index) => {
-        return createData(index + 1, item.title, item.description, item.time, item.id);
+        return createData(index + 1, item.name, item.description, item.timeStamp, item.id);
     });
 
     return (
@@ -61,7 +61,7 @@ export default function BasicTable({ data, handleDelete, handleEdit, handleCopy 
 
                             <TableCell align="center">
                                 <Typography>
-                                    {row.title}
+                                    {row.name}
                                 </Typography>
                             </TableCell>
                             <TableCell align="center">
@@ -71,7 +71,7 @@ export default function BasicTable({ data, handleDelete, handleEdit, handleCopy 
                             <TableCell align="center" sx={{
                                 width: '10%'
                             }}>
-                                {row.time}
+                                {row.timeStamp}
                             </TableCell>
                             <TableCell align="center" sx={{
                                 padding: '10px',

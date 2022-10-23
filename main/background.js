@@ -20,10 +20,11 @@ if (isProd) {
   });
   
   if (isProd) {
-    await mainWindow.loadURL('app://./home.html');
+    //TODO: check whether the db is empty or not for get started page
+    await mainWindow.loadURL('app://./get_started.html');
   } else {
     const port = process.argv[2];
-    await mainWindow.loadURL(`http://localhost:${port}/home`);
+    await mainWindow.loadURL(`http://localhost:${port}/get_started`);
     mainWindow.webContents.openDevTools();
     
   }
@@ -73,8 +74,25 @@ ipcMain.handle('DBaddBot', (event, args) =>
 {  
   return storageAct.addBot(args.bot);
 });
+ipcMain.handle('DBsetUserName', (event, args) =>
+{
+  return storageAct.setUserName(args.name);
+});
 
+ipcMain.handle('DBgetUserName', (event) =>
+{
+  return storageAct.getUserName();
+});
 
+ipcMain.handle('DBdeleteBot', (event, args) =>
+{ 
+  return storageAct.deleteBot(args.id);
+});
+
+ipcMain.handle('DBupdateBot', (event, args) =>
+{
+  return storageAct.updateBot(args.bot);
+});
 
 ipcMain.on('restart_app', () => {
   autoUpdater.quitAndInstall();

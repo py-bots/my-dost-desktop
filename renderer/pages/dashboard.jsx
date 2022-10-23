@@ -5,6 +5,7 @@ import Modal from '../components/Model'
 import BasicTable from '../components/Table';
 import { useEffect, useState } from 'react'
 import uuid from 'react-uuid';
+import { addBot, deleteDBBot, getAllBots, getUserName } from '../components/db-components';
 
 export default function Example() {
 
@@ -12,87 +13,75 @@ export default function Example() {
     const [bots, setBots] = useState([]);
     const [username, setUsername] = useState('');
 
-    useEffect(() => {
+    useEffect( () =>  {
         console.log(bots)
-        const user = localStorage.getItem('username');
-        setUsername(user);
-        const data = localStorage.getItem('bots');
-        if (data) {
-            setBots(JSON.parse(data));
+        async function getDataFromDB() {
+            const userName = await getUserName(); 
+            const dbData = await getAllBots();
+            if (dbData) {
+                setBots(dbData);
+            }
+            console.log(JSON.stringify(dbData));//from db 
+            setUsername(userName[0].name);
+           
         }
+        getDataFromDB() ;         
     }, [])
 
-    const formSubmitted = (e) => {
+    const formSubmitted = async (e) => {
         e.preventDefault();
         const bot_name = e.target.floating_name.value;
         const bot_description = e.target.floating_description.value;
-
-        const local_bots = localStorage.getItem('bots');
-        if (local_bots) {
-            const botsArray = JSON.parse(local_bots);
             const bot = {
                 'id': uuid(),
                 'title': bot_name,
                 'description': bot_description,
                 'time': new Date().toLocaleString(),
+                'workspace' : '' ,
+                'code' : '', 
                 'data': ''
             }
-            botsArray.push(bot);
-            localStorage.setItem('bots', JSON.stringify(botsArray));
-        } else {
-            const bot = {
-                'id': uuid(),
-                'title': bot_name,
-                'description': bot_description,
-                'time': new Date().toLocaleString(),
-                'data': ''
-            }
-            localStorage.setItem('bots', JSON.stringify([bot]));
-        }
-        setBots(JSON.parse(localStorage.getItem('bots')));
+            await addBot(bot); // add bot to db
+        
+        setBots(await getAllBots());
         setOpen(false);
-
     }
 
-    const deleteBot = (id) => {
+    const deleteBot = async (id) => {
         console.log(id, 'delete');
-        const local_bots = localStorage.getItem('bots');
-        if (local_bots) {
-            const botsArray = JSON.parse(local_bots);
-            const newBots = botsArray.filter(bot => bot.id !== id);
-            localStorage.setItem('bots', JSON.stringify(newBots));
-            setBots(JSON.parse(localStorage.getItem('bots')));
+        if (bots) {
+           await deleteDBBot(id); // delete bot from db
+           setBots(await getAllBots());
         }
     }
 
     const editBot = (id) => {
         console.log(id, 'edit');
-        const local_bots = localStorage.getItem('bots');
-        if (local_bots) {
-            const botsArray = JSON.parse(local_bots);
-            const bot = botsArray.find(bot => bot.id === id);
+            const bot = bots.find(bot => bot.id === id);
+            console.log("Switching to editor")
+            console.log(JSON.stringify(bot));
             localStorage.setItem('bot', JSON.stringify(bot));
             window.location.href = '/editor';
-        }
+        
     }
 
-    const copyBot = (id) => {
+    const copyBot = async (id) => {
         console.log(id, 'copy');
-        const local_bots = localStorage.getItem('bots');
-        if (local_bots) {
-            const botsArray = JSON.parse(local_bots);
+        
+            const botsArray = await getAllBots();
             const bot = botsArray.find(bot => bot.id === id);
             const newBot = {
                 'id': uuid(),
-                'title': '(Copy) ' + bot.title,
+                'title': '(Copy) ' + bot.name,
                 'description': bot.description,
                 'time': new Date().toLocaleString(),
-                'data': bot.data
+                'workspace' : bot.workspace ,
+                'code' : bot.code,
+
             }
-            botsArray.push(newBot);
-            localStorage.setItem('bots', JSON.stringify(botsArray));
-            setBots(JSON.parse(localStorage.getItem('bots')));
-        }
+            await addBot(newBot); // add bot to db
+            setBots(await getAllBots());
+        
     }
 
 
