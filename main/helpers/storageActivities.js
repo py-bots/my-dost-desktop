@@ -3,7 +3,7 @@ var db = dbmgr.db;
 const Bot = require('../models/bot_model.js');
 
 exports.createBotTable = () => {
-
+    
     const sql = "CREATE TABLE IF NOT EXISTS bots (id TEXT PRIMARY KEY , name TEXT, timeStamp TEXT , description TEXT, code TEXT, workspace TEXT)";
     const sqlsecond = "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY , name VARCHAR(45) NOT NULL)";
     let stmt = db.prepare(sql);
@@ -13,7 +13,13 @@ exports.createBotTable = () => {
 }
 
 exports.checkifEmpty = () => {
-    const sql = "SELECT * FROM user";
+    // const sql33 = "drop table bots";
+    // const sql2 = "drop table user";
+    // let stmmmt = db.prepare(sql33);
+    // let stmmmt2 = db.prepare(sql2);
+    // stmmmt.run();
+    // stmmmt2.run();
+    const sql = "select * from SQLITE_SCHEMA";
     let stmt = db.prepare(sql);
     let result = stmt.all();
     console.log(result); 
