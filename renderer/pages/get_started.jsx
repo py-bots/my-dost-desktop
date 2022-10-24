@@ -14,7 +14,6 @@ function GetStarted() {
 
     async function setName(e) {
         setUsername(e.target.value);
-       
         //TODO: Change it to a global state later
         localStorage.setItem('username', e.target.value);
     }

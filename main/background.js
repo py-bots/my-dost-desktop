@@ -1,5 +1,6 @@
 import { app, dialog, ipcMain , net } from 'electron';
 import serve from 'electron-serve';
+import { checkifEmpty } from '../renderer/components/db-components';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
 const storageAct = require('./helpers/storageActivities.js');
@@ -18,13 +19,21 @@ if (isProd) {
     width: 1000,
     height: 600,
   });
-  
+  const empty = storageAct.checkifEmpty(); 
   if (isProd) {
-    //TODO: check whether the db is empty or not for get started page
+    
+    if (empty) {
     await mainWindow.loadURL('app://./get_started.html');
+    } else {
+    await mainWindow.loadURL('app://./dashboard.html');
+    }
   } else {
     const port = process.argv[2];
-    await mainWindow.loadURL(`http://localhost:${port}/get_started`);
+    if (empty) {
+      await mainWindow.loadURL(`http://localhost:${port}/get_started`);
+      } else {
+      await mainWindow.loadURL(`http://localhost:${port}/dashboard`);
+      }
     mainWindow.webContents.openDevTools();
     
   }

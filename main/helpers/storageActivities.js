@@ -12,6 +12,19 @@ exports.createBotTable = () => {
     stmt2.run();
 }
 
+exports.checkifEmpty = () => {
+    const sql = "SELECT * FROM user";
+    let stmt = db.prepare(sql);
+    let result = stmt.all();
+    console.log(result); 
+    if (result.length == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 
 exports.getAllBots  = () => {
     const sql = "SELECT * FROM bots";
@@ -57,9 +70,15 @@ exports.deleteBot = (id) => {
 
 exports.updateBot = (bot) => {
     console.log("updateBot");
+    console.log(bot);
+
+    // console.log(JSON.stringify(bot));
+    console.log(bot.workspace)
+    console.log(bot.name)
+    console.log(bot.id)
     const sql = `UPDATE bots SET name = ? , timeStamp = ? , description = ? , code = ? , workspace = ? WHERE id = ?`;
     let stmt = db.prepare(sql);
-    let info = stmt.run(bot.title, bot.time ,bot.description, bot.code, bot.workspace, bot.id);
+    let info = stmt.run(bot.name, bot.timeStamp ,bot.description, bot.code, bot.workspace, bot.id);
     console.log(info);
     return true ;
 }

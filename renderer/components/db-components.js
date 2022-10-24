@@ -68,3 +68,16 @@ export async function updateDBBot(bot){
     }
 }
 
+export async function checkifEmpty(){
+    try{
+        var res = await ipcRenderer.invoke("DBcheckifEmpty");
+        console.log("res checkifEmpty" + res);
+        return res;
+    }
+    catch(error){
+        console.log("error occured " + error);
+        return false ;
+    }
+}
+
+
