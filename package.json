@@ -1,6 +1,6 @@
 {
     "private": true,
-    "name": "My-DOST",
+    "name": "my-dost",
     "description": "Advanced Python Made Simple",
     "version": "1.0.10",
     "author": "Murali M V P <mmv@pybots.ai>",
@@ -13,7 +13,9 @@
         "deploy": "electron-builder build  --win --publish always"
     },
     "dependencies": {
+        "@blockly/block-plus-minus": "^2.0.39",
         "@blockly/field-date": "^4.2.25",
+        "@blockly/theme-dark": "^2.0.6",
         "@emotion/react": "^11.10.4",
         "@emotion/styled": "^11.10.4",
         "@fontsource/roboto": "^4.5.8",
@@ -24,16 +26,22 @@
         "better-sqlite3": "^7.6.2",
         "bindings": "^1.5.0",
         "blockly": "^5.20210325.0",
+        "classnames": "^2.3.2",
+        "dialogs": "^2.0.1",
+        "electron-prompt": "^1.7.0",
         "electron-serve": "^1.1.0",
         "electron-store": "^8.1.0",
         "electron-updater": "^5.2.1",
         "python-shell": "^3.0.1",
         "react-blockly": "^7.0.1",
+        "react-code-blocks": "^0.0.9-0",
         "react-datepicker": "^4.8.0",
         "react-icons": "^4.6.0",
         "react-logger": "^1.1.0",
+        "react-syntax-highlighter": "^15.5.0",
         "react-uuid": "^1.0.3",
-        "sqlite-electron": "^2.0.5"
+        "sqlite-electron": "^2.0.5",
+        "vex-js": "^4.1.0"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.7",
