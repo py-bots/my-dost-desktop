@@ -39,7 +39,6 @@ export default function Example() {
                 'time': new Date().toLocaleString(),
                 'workspace' : '' ,
                 'code' : '', 
-                'data': ''
             }
             await addBot(bot); // add bot to db
         
@@ -52,16 +51,18 @@ export default function Example() {
         if (bots) {
            await deleteDBBot(id); // delete bot from db
            setBots(await getAllBots());
-        }
+        }     
     }
 
     const editBot = (id) => {
         console.log(id, 'edit');
-            const bot = bots.find(bot => bot.id === id);
-            console.log("Switching to editor")
-            console.log(JSON.stringify(bot));
-            localStorage.setItem('bot', JSON.stringify(bot));
-            window.location.href = '/editor';
+        const bot = bots.find(bot => bot.id === id);
+        console.log("Switching to editor")
+        console.log(JSON.stringify(bot));
+        localStorage.setItem('bot', JSON.stringify(bot));
+        var winLoc =  origin + '/editor';
+        //window.location.href = winLoc;
+        //return false; 
         
     }
 
@@ -114,6 +115,7 @@ export default function Example() {
                                     <AddIcon />
                                 </Fab>
                             </div>
+                            
                         ) : (
                             <div className="bg-gray-800 rounded-lg shadow px-5 py-2 sm:px-6">
                                 <div className="rounded-lg h-96 text-gray-50">
@@ -147,6 +149,7 @@ export default function Example() {
                                                     New File
                                                 </button>
                                             </div>
+                                            
                                         </div>
                                     </div>
                                 </div>

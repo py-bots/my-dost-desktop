@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import SearchIcon from '@mui/icons-material/Search';
 import dynamic from "next/dynamic";
 import Blockly from 'blockly';
+import Link from 'next/link';
 import '@blockly/block-plus-minus';
 import "blockly/python";
 import { CodeBlock, vs2015 as theme } from "react-code-blocks";
@@ -29,10 +29,11 @@ function Next() {
   const [search, setSearch] = useState(false)
   useEffect(() => {
     setBot(JSON.parse(localStorage.getItem('bot')));
+   
     bot.workspace = JSON.parse(localStorage.getItem('bot')).workspace;
-
+    console.log(bot.workspace); 
     if (bot.workspace != '') {
-      setXml(bot.workspace);
+     setXml(bot.workspace);
     }
     else {
       bot = { ...JSON.parse(localStorage.getItem('bot')), workspace: ConfigFiles.INITIAL_XML };
@@ -82,11 +83,6 @@ function Next() {
   }
 
 
-  // const saveWorkspace = async () => {
-  //   setBot(JSON.parse(localStorage.getItem('bot')));
-    
-  //   await updateDBBot(bot);
-  // }
 
   return (
     <React.Fragment>
@@ -103,9 +99,11 @@ function Next() {
           </IconButton>
         </div>
         <div>
-          <IconButton aria-label="back" color="primary" onClick={() => window.location.href = '/dashboard'}>
+          <Link href="/dashboard">
+          <IconButton aria-label="back" color="primary" >
             <ArrowBackIcon />
           </IconButton>
+          </Link>
         </div>
       </div>
       <div className='grid grid-col-1'>

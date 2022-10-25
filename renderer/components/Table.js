@@ -4,7 +4,7 @@ import { Typography, TableRow, Table, TableBody, TableCell, TableContainer, Tabl
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExtensionIcon from '@mui/icons-material/Extension';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-
+import Link from 'next/link';
 
 
 export default function BasicTable({ data, handleDelete, handleEdit, handleCopy }) {
@@ -78,11 +78,13 @@ export default function BasicTable({ data, handleDelete, handleEdit, handleCopy 
                                 width: '6%'
                             }}>
                                 <ButtonGroup variant="outlined" aria-label="actions" size="small">
+                                    <Link href = "/editor" >
                                     <IconButton aria-label="edit" size="small" color="primary" onClick={() => {
                                         handleEdit(row.id)
                                     }}>
                                         <ExtensionIcon />
                                     </IconButton>
+                                    </Link>
                                     <IconButton aria-label="delete" size="small" color='error' onClick={() => {
                                         handleDelete(row.id)
                                     }}>
