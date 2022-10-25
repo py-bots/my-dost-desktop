@@ -27,6 +27,7 @@
         "electron-serve": "^1.1.0",
         "electron-store": "^8.1.0",
         "electron-updater": "^5.2.1",
+        "python-shell": "^3.0.1",
         "react-blockly": "^7.0.1",
         "react-datepicker": "^4.8.0",
         "react-icons": "^4.6.0",

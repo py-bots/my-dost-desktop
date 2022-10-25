@@ -2,3 +2,4 @@
 2.Cleaning UI 
 3.Solving inplace TODOS 
 4.Add downloading progress bar in auto Updater and full proof it 
+5. SQLLITE ORM 
