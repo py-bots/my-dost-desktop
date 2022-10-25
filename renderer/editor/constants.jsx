@@ -1,5 +1,7 @@
+import DarkTheme from "@blockly/theme-dark";
+
 const INITIAL_XML =
-  '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="text" x="70" y="30"><field name="TEXT"></field></block></xml>';
+  '<xml xmlns="http://www.w3.org/1999/xhtml"></xml>';
 
 const INITIAL_TOOLBOX_JSON = {
   kind: "categoryToolbox",
@@ -578,18 +580,18 @@ const INITIAL_TOOLBOX_JSON = {
       ],
     },
     { kind: "sep" },
-    {
-      kind: "category",
-      name: "Custom Button",
-      colour: 19,
-      contents: [
-        {
-          kind: "button",
-          text: "A button",
-          callbackKey: "myFirstButtonPressed",
-        },
-      ],
-    },
+    // {
+    //   kind: "category",
+    //   name: "Custom Button",
+    //   colour: 19,
+    //   contents: [
+    //     {
+    //       kind: "button",
+    //       text: "A button",
+    //       callbackKey: "myFirstButtonPressed",
+    //     },
+    //   ],
+    // },
     {
       kind: "category",
       name: "Variables",
@@ -660,10 +662,47 @@ const INITIAL_TOOLBOX_CATEGORIES = [
   },
 ];
 
+const WORKSPACE_THEME_DARK = {
+  renderer: "thrasos",
+  collapse: true,
+  comments: true,
+  disable: true,
+  maxBlocks: Infinity,
+  trashcan: true,
+  horizontalLayout: false,
+  toolboxPosition: "start",
+  css: true,
+  // media : 'https://blockly-demo.appspot.com/static/media/',
+  rtl: false,
+  scrollbars: true,
+  sounds: true,
+  oneBasedIndex: true,
+  grid: {
+    spacing: 20,
+    length: 0.5,
+    colour: "#888",
+    snap: true,
+  },
+  zoom: {
+    controls: true,
+    // wheel : true,
+    startScale: 1,
+    maxScale: 3,
+    minScale: 0.3,
+    scaleSpeed: 1.2,
+  },
+
+  theme: DarkTheme,
+};
+
 const ConfigFiles = {
   INITIAL_XML,
   INITIAL_TOOLBOX_JSON,
   INITIAL_TOOLBOX_CATEGORIES,
+  WORKSPACE_THEME_DARK,
 };
 
 export default ConfigFiles;
+
+
+
