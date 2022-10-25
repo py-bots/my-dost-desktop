@@ -1,10 +1,9 @@
 import { app, dialog, ipcMain, net } from 'electron';
 import serve from 'electron-serve';
-import { checkifEmpty } from '../renderer/components/db-components';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
 const storageAct = require('./helpers/storageActivities.js');
-
+const codeAct = require('./helpers/scriptRunner.js');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -98,12 +97,19 @@ ipcMain.handle('DBdeleteBot', (event, args) => {
 });
 
 ipcMain.handle('DBupdateBot', (event, args) => {
-  return storageAct.updateBot(args.bot);
+  return storageAct.updateBot(args);
 });
 
 ipcMain.on('restart_app', () => {
   autoUpdater.quitAndInstall();
 });
+
+
+ipcMain.handle('runScript', (event, args) => {
+  return codeAct.runCodeString(args.codeString);
+}
+  );
+
 
 ipcMain.handle("login", (obj, data) => {
   try {

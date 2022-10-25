@@ -19,6 +19,7 @@ import { usePromptDialog } from "../components/PromptDialog";
 
 import ConfigFiles from '../editor/constants'
 import { updateDBBot } from '../components/db-components';
+import { runCodeString } from '../components/coderun-components';
 
 function Next() {
   const { getPrompt } = usePromptDialog();
@@ -26,9 +27,6 @@ function Next() {
   var [bot, setBot] = useState({});
   const [pythonCode, setPythonCode] = useState("Drag and drop blocks to generate code");
   const [search, setSearch] = useState(false)
-
-
-
   useEffect(() => {
     setBot(JSON.parse(localStorage.getItem('bot')));
     bot.workspace = JSON.parse(localStorage.getItem('bot')).workspace;
@@ -64,16 +62,31 @@ function Next() {
     Blockly.Python.INFINITE_LOOP_TRAP = null;
     const complete_code = Blockly.Python.workspaceToCode(workspace);
     setPythonCode(complete_code);
+    setXml(workspace);
     bot.workspace = workspace;
     setBot(bot);
-  }
-
-  const saveWorkspace = async () => {
-    setBot(JSON.parse(localStorage.getItem('bot')));
-    bot = { ...bot, workspace: xml };
+    bot = { ...JSON.parse(localStorage.getItem('bot')), workspace: xml ,code: pythonCode,timeStamp : new Date().toLocaleString()};
     console.log(bot);
     await updateDBBot(bot);
   }
+
+  const runCodeScript = async  () => {
+    console.log("Running code");
+    console.log(pythonCode);
+    var results = await runCodeString(pythonCode);
+    //results are not currently returning to this point 
+    // check script runner js line 25 to solve this. 
+    console.log("back");
+    //results of pyCode
+    console.log(JSON.stringify(results));
+  }
+
+
+  // const saveWorkspace = async () => {
+  //   setBot(JSON.parse(localStorage.getItem('bot')));
+    
+  //   await updateDBBot(bot);
+  // }
 
   return (
     <React.Fragment>
@@ -85,7 +98,7 @@ function Next() {
           </IconButton>
         </div>
         <div>
-          <IconButton aria-label="run" color="primary">
+          <IconButton aria-label="run" color="primary" onClick={runCodeScript}>
             <PlayCircleIcon />
           </IconButton>
         </div>

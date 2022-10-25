@@ -59,7 +59,8 @@ export async function deleteDBBot(id) {
 
 export async function updateDBBot(bot) {
     try {
-        var res = await ipcRenderer.invoke("DBupdateBot", { bot });
+        console.log("updateDBBot");
+        var res = await ipcRenderer.invoke("DBupdateBot",  bot );
         console.log("res updateBot" + res);
         return res;
     }
