@@ -100,6 +100,11 @@ ipcMain.handle('DBupdateBot', (event, args) => {
   return storageAct.updateBot(args);
 });
 
+ipcMain.handle('isProduction', (event) => {
+  return isProd;
+});
+
+
 ipcMain.on('restart_app', () => {
   autoUpdater.quitAndInstall();
 });

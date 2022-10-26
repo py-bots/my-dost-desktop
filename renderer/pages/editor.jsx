@@ -13,27 +13,34 @@ const BlocklyWorkspace = dynamic(
   () => import('react-blockly').then((mod) => mod.BlocklyWorkspace),
   { ssr: false }
 )
-
 import { usePromptDialog } from "../components/PromptDialog";
-
-
 import ConfigFiles from '../editor/constants'
 import { updateDBBot } from '../components/db-components';
 import { runCodeString } from '../components/coderun-components';
+import { RestaurantRounded } from '@mui/icons-material';
 
 function Next() {
+  
   const { getPrompt } = usePromptDialog();
   const [xml, setXml] = useState(ConfigFiles.INITIAL_XML);
   var [bot, setBot] = useState({});
   const [pythonCode, setPythonCode] = useState("Drag and drop blocks to generate code");
   const [search, setSearch] = useState(false)
   useEffect(() => {
+    
     setBot(JSON.parse(localStorage.getItem('bot')));
-   
+    setXml(JSON.parse(localStorage.getItem('bot')).workspace || ConfigFiles.INITIAL_XML);
     bot.workspace = JSON.parse(localStorage.getItem('bot')).workspace;
-    console.log(bot.workspace); 
+    console.log(bot.workspace == "")
     if (bot.workspace != '') {
-     setXml(bot.workspace);
+      //console.log("loading workspace from bot");
+      //console.log(bot.workspace); 
+      console.log("loading workspace from bot");
+      console.log(bot.workspace);
+      setXml(bot.workspace);
+      setBot(bot)
+      
+      //console.log(xml)
     }
     else {
       bot = { ...JSON.parse(localStorage.getItem('bot')), workspace: ConfigFiles.INITIAL_XML };
@@ -41,18 +48,18 @@ function Next() {
       setBot(bot);
     }
     Blockly.prompt = function (msg, defaultValue, callback) {
-      console.log("inside prompt");
-      console.log(msg, defaultValue, callback);
+      //console.log("inside prompt");
+      //console.log(msg, defaultValue, callback);
       getPrompt({
         title: msg,
         label: "Enter value",
         value: defaultValue,
 
       }).then((value) => {
-        console.log("value", value);
+        //console.log("value", value);
         callback(value);
       }).catch((err) => {
-        console.log("err", err);
+        //console.log("err", err);
         callback(null);
       });
     };
@@ -63,6 +70,21 @@ function Next() {
     Blockly.Python.INFINITE_LOOP_TRAP = null;
     const complete_code = Blockly.Python.workspaceToCode(workspace);
     setPythonCode(complete_code);
+  }
+ //bot workspace is actually the xml
+  const updateXml = async (workspace) => {
+    console.log("called")
+   
+    if(workspace =='<xml xmlns="https://developers.google.com/blockly/xml"></xml>' || workspace == '<xml xmlns="http://www.w3.org/1999/xhtml"></xml>')
+    {
+      // console.log(JSON.parse (localStorage.getItem('bot')).workspace)
+       setXml(JSON.parse (localStorage.getItem('bot')).workspace);
+      // console.log("Actual xml "+ xml)
+      return;
+    };
+    //console.log("Onside update xml" + workspace);
+    console.log("update XML  -: "+ xml);
+    console.log("update workspace xml -: "+ workspace);
     setXml(workspace);
     bot.workspace = workspace;
     setBot(bot);
@@ -70,16 +92,18 @@ function Next() {
     console.log(bot);
     await updateDBBot(bot);
   }
+    
+
 
   const runCodeScript = async  () => {
-    console.log("Running code");
-    console.log(pythonCode);
+    //console.log("Running code");
+    //console.log(pythonCode);
     var results = await runCodeString(pythonCode);
     //results are not currently returning to this point 
     // check script runner js line 25 to solve this. 
-    console.log("back");
+    //console.log("back");
     //results of pyCode
-    console.log(JSON.stringify(results));
+    //console.log(JSON.stringify(results));
   }
 
 
@@ -112,7 +136,7 @@ function Next() {
             className="h-screen"
             toolboxConfiguration={ConfigFiles.INITIAL_TOOLBOX_JSON}
             initialXml={xml}
-            onXmlChange={setXml}
+            onXmlChange={updateXml}
             workspaceConfiguration={ConfigFiles.WORKSPACE_THEME_DARK}
             onWorkspaceChange={updateWorkspace}
           />

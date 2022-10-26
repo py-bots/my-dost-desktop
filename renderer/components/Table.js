@@ -78,13 +78,13 @@ export default function BasicTable({ data, handleDelete, handleEdit, handleCopy 
                                 width: '6%'
                             }}>
                                 <ButtonGroup variant="outlined" aria-label="actions" size="small">
-                                    <Link href = "/editor" >
+                                  
                                     <IconButton aria-label="edit" size="small" color="primary" onClick={() => {
                                         handleEdit(row.id)
                                     }}>
                                         <ExtensionIcon />
                                     </IconButton>
-                                    </Link>
+                                   
                                     <IconButton aria-label="delete" size="small" color='error' onClick={() => {
                                         handleDelete(row.id)
                                     }}>

@@ -6,6 +6,9 @@ import BasicTable from '../components/Table';
 import { useEffect, useState } from 'react'
 import uuid from 'react-uuid';
 import { addBot, deleteDBBot, getAllBots, getUserName } from '../components/db-components';
+import Link from 'next/link';
+import Router from 'next/router';
+import { isProduction } from '../components/coderun-components';
 
 export default function Example() {
 
@@ -54,16 +57,28 @@ export default function Example() {
         }     
     }
 
-    const editBot = (id) => {
+    const editBot = async (id) => {
         console.log(id, 'edit');
         const bot = bots.find(bot => bot.id === id);
+        localStorage.setItem('bot', JSON.stringify(bot));
         console.log("Switching to editor")
         console.log(JSON.stringify(bot));
-        localStorage.setItem('bot', JSON.stringify(bot));
-        var winLoc =  origin + '/editor';
-        //window.location.href = winLoc;
-        //return false; 
+       // console.log(window.location.href); 
+       
+        if(await isProduction())
+        {
+            window.location.href = 'app://./editor.html';
+        }
+        else
+        {
+            window.location.href = "/editor";
+        }
+       
         
+        //tried window.location.reload(); -failed 
+         //tried Router.push('/editor'); - failed 
+       //// console.log(window.location.href);
+        //return false; // to prevent default behaviour of form
     }
 
     const copyBot = async (id) => {
