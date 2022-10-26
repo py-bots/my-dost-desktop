@@ -28,7 +28,6 @@
         "blockly": "^5.20210325.0",
         "classnames": "^2.3.2",
         "dialogs": "^2.0.1",
-        "electron-prompt": "^1.7.0",
         "electron-serve": "^1.1.0",
         "electron-store": "^8.1.0",
         "electron-updater": "^5.2.1",
@@ -38,10 +37,8 @@
         "react-datepicker": "^4.8.0",
         "react-icons": "^4.6.0",
         "react-logger": "^1.1.0",
-        "react-syntax-highlighter": "^15.5.0",
         "react-uuid": "^1.0.3",
-        "sqlite-electron": "^2.0.5",
-        "vex-js": "^4.1.0"
+        "sqlite-electron": "^2.0.5"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.7",

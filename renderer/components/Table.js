@@ -22,7 +22,7 @@ export default function BasicTable({ data, handleDelete, handleEdit, handleCopy 
                 <TableHead>
                     <TableRow sx={{
                         fontWeight: 'bold',
-                        backgroundColor: '#0f172a',
+                        backgroundColor: '#06283D',
                         border: '0px solid #fff',
                         color: 'text.primary',
 
@@ -50,6 +50,7 @@ export default function BasicTable({ data, handleDelete, handleEdit, handleCopy 
                             key={row.name}
                             sx={{
                                 '&:last-child td, &:last-child th': { border: 0 },
+                                backgroundColor: '#112031',
                             }}
                         >
                             <TableCell align="center"
@@ -78,13 +79,13 @@ export default function BasicTable({ data, handleDelete, handleEdit, handleCopy 
                                 width: '6%'
                             }}>
                                 <ButtonGroup variant="outlined" aria-label="actions" size="small">
-                                  
+
                                     <IconButton aria-label="edit" size="small" color="primary" onClick={() => {
                                         handleEdit(row.id)
                                     }}>
                                         <ExtensionIcon />
                                     </IconButton>
-                                   
+
                                     <IconButton aria-label="delete" size="small" color='error' onClick={() => {
                                         handleDelete(row.id)
                                     }}>

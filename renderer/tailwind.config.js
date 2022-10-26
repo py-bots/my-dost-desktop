@@ -7,8 +7,8 @@ module.exports = {
     extend: {
       colors: {
         'background': 'hsl(264.71,81%,4%)',
+      },
     },
-  },
   },
   plugins: [],
 };

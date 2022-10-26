@@ -3,7 +3,7 @@ import serve from 'electron-serve';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
 const storageAct = require('./helpers/storageActivities.js');
-const codeAct = require('./helpers/scriptRunner.js');
+import { PythonShell } from 'python-shell';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -110,49 +110,54 @@ ipcMain.on('restart_app', () => {
 });
 
 
-ipcMain.handle('runScript',async  (event, args) => {
-  return await codeAct.runCodeString(args.codeString);
-}
+ipcMain.handle('runScript', (event, args) => {
+  var run = new Promise((resolve, reject) => {
+    try {
+      var path = args.pythonPath && args.pythonPath != '' ? args.pythonPath : 'C:\\Users\\Public\\PyBots\\My-AutoPylot\\support\\python.exe';
+      let options =
+      {
+        mode: 'text',
+        pythonPath: path,
+      };
+      console.log("path is " + path);
+      PythonShell.runString(args.codeString, options, function (err, results) {
+        if (err) throw err;
+        resolve(results);
+      });
+    } catch (error) {
+      console.log("error occured " + error);
+      reject(error);
+    }
+  }
+  )
+  return run.then((result) => {
+    console.log(result);
+    return result;
+  }
+  ).catch((error) => {
+    return error;
+  }
+  )
+});
+
+
+
+ipcMain.handle('get-python-path', (event) => {
+  // show open dialog
+  const options = {
+    title: 'Select Python Path',
+    properties: ['openFile'],
+    filters: [
+      { name: 'Python', extensions: ['exe'] }
+    ]
+  }
+  return dialog.showOpenDialog(options).then((result) => {
+    if (!result.canceled) {
+      return result.filePaths[0];
+    }
+  }
   );
 
-
-ipcMain.handle("login", (obj, data) => {
-  try {
-    console.log("Inside the login function 2");
-    console.log(data);
-    console.log(JSON.stringify(data))
-
-    const request = net.request({
-      method: 'POST',
-      protocol: 'https:',
-      hostname: 'api.pybots.ai',
-      path: '/auth/login/',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        data
-      })
-
-    })
-    //TODO:solve the problem of 400 
-    request.on('response', (response) => {
-      console.log(`STATUS: ${response.statusCode}`)
-      console.log(`HEADERS: ${response.headers}`)
-      response.on('data', (chunk) => {
-        console.log(`BODY: ${chunk}`)
-      })
-      response.on('end', () => {
-        console.log('No more data in response.')
-      })
-    });
-    request.end();
-    return "success from login function";
-
-
-  } catch (error) {
-    console.log("error occured" + error);
-  }
 
 
 });

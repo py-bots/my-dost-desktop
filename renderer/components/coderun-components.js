@@ -4,10 +4,9 @@ import electron from 'electron';
 const ipcRenderer = electron.ipcRenderer || false;
 
 
-export async function runCodeString(codeString) {
+export async function runCodeString(codeString, pythonPath) {
     try {
-        var res = await ipcRenderer.invoke("runScript", { codeString });
-        console.log("res runCodeString" + res);
+        var res = await ipcRenderer.invoke("runScript", { codeString, pythonPath });
         return res;
     }
     catch (error) {
