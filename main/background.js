@@ -110,8 +110,8 @@ ipcMain.on('restart_app', () => {
 });
 
 
-ipcMain.handle('runScript', (event, args) => {
-  return codeAct.runCodeString(args.codeString);
+ipcMain.handle('runScript',async  (event, args) => {
+  return await codeAct.runCodeString(args.codeString);
 }
   );
 
