@@ -6,9 +6,94 @@ import BasicTable from '../components/Table';
 import { useEffect, useState } from 'react'
 import uuid from 'react-uuid';
 import { addBot, deleteDBBot, getAllBots, getUserName } from '../components/db-components';
-import Link from 'next/link';
-import Router from 'next/router';
 import { isProduction } from '../components/coderun-components';
+import React from 'react';
+import { version_info } from '../components/server-components.js';
+import { ipcRenderer } from 'electron';
+
+
+
+
+function notificationWindow() {
+    var [hiddenWindow, SetHiddenWindow] = React.useState(true);
+    var [notiftext, setNotifText] = React.useState('');
+    var [hiddenButton, setHiddenButton] = React.useState(true);
+  
+    useEffect(() => {
+      ipcRenderer.on('update_available', () => {
+        SetHiddenWindow(false);
+        setNotifText('A new update is available. Downloading now...');
+        return () => {
+          ipcRenderer.removeAllListeners('update_available');
+        }
+      });
+
+      ipcRenderer.on('download_progress', (event, log_message) => {
+        console.log(log_message);
+        setNotifText(log_message);
+        return () => {
+          ipcRenderer.removeAllListeners('update_available');
+        }
+
+      })
+  
+      ipcRenderer.on('update_downloaded', () => {
+        ipcRenderer.removeAllListeners('update_downloaded');
+        setNotifText('Update Downloaded. It will be installed on restart. Restart now?');
+        setHiddenButton(false);
+        SetHiddenWindow(false);
+        // message.innerText = 'Update Downloaded. It will be installed on restart. Restart now?';
+        // restartButton.classList.remove('hidden');
+        // notification.classList.remove('hidden');
+  
+        return () => {
+          ipcRenderer.removeAllListeners('update_available');
+        }
+      });
+    }, []);
+  
+    return (
+      <div id="notification" className="notifwindow" hidden={hiddenWindow}>
+        <p  {...notiftext} ></p>
+        <button id="close-button" onClick={() => SetHiddenWindow = true}>
+          Close
+        </button>
+        <button id="restart-button" onClick={() => ipcRenderer.send('restart_app')} className="notifwindow" hidden={hiddenButton}>
+          Restart
+        </button>
+      </div>
+  
+    )
+  }
+  
+  
+  function getVersion() {
+    const [version, setVersion] = React.useState('');
+    const [error, setError] = React.useState('');
+  
+    React.useEffect(() => {
+      console.log('useEffect');
+      version_info().then((data) => {
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setVersion(data);
+        }
+      });
+    }, []);
+  
+    return (
+      <div>
+        <p style={{color:'white'}}>Version </p>
+        <p style={{color:'white'}}>{version}</p>
+        <p style={{color:'white'}}>{error}</p>
+      </div>
+    );
+  }
+  
+
+
+
 
 export default function Example() {
 
@@ -110,7 +195,12 @@ export default function Example() {
                             <h1 className="text-3xl font-bold text-white text-center">
                                 <span className='text-transparent text-4xl bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600'>
                                     {username ? username + "'s" : ''}
+                                    
                                 </span> Dashboard
+                                {getVersion()}
+                                    {
+                                        notificationWindow()
+                                    }
                             </h1>
                         </div>
                     </header>

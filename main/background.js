@@ -6,16 +6,17 @@ const storageAct = require('./helpers/storageActivities.js');
 import { PythonShell } from 'python-shell';
 
 const isProd = process.env.NODE_ENV === 'production';
-
+let mainWindow
 if (isProd) {
   serve({ directory: 'app' });
 } else {
   app.setPath('userData', `${app.getPath('userData')} (development)`);
 }
 
+
 (async () => {
   await app.whenReady();
-  const mainWindow = createWindow('main', {
+   mainWindow = createWindow('main', {
     width: 1000,
     height: 600,
     webPreferences: {
@@ -38,7 +39,6 @@ if (isProd) {
       await mainWindow.loadURL(`http://localhost:${port}/dashboard`);
     }
     mainWindow.webContents.openDevTools();
-
   }
   //init db table 
   storageAct.createBotTable();
@@ -48,7 +48,12 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
-autoUpdater.on("update-available", (_event, releaseNotes, releaseName) => {
+autoUpdater.on("update-available", async (_event, releaseNotes, releaseName) => {
+  if(isProd)
+  {
+    window.location.href = 'app://./update.html';
+  }
+  
   const dialogOpts = {
     type: 'info',
     buttons: ['Ok'],
@@ -57,8 +62,19 @@ autoUpdater.on("update-available", (_event, releaseNotes, releaseName) => {
     detail: 'A new version is being downloaded.'
   }
   dialog.showMessageBox(dialogOpts, (response) => {
-
+    console.log(response);
   });
+})
+
+
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  console.log(log_message);
+  mainWindow.webContents.send('download-progress', log_message);
+  //send the log nessage 
+  
 })
 
 autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
