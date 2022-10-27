@@ -2,7 +2,7 @@
   
     "name": "my-dost",
     "description": "Advanced Python Made Simple",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "author": "Murali M V P <mmv@pybots.ai>",
     "main": "app/background.js",
     "scripts": {
