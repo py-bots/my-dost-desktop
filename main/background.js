@@ -1,4 +1,4 @@
-import { app, dialog, ipcMain, net } from 'electron';
+import { app, dialog, ipcMain} from 'electron';
 import serve from 'electron-serve';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
@@ -49,11 +49,7 @@ app.on('window-all-closed', () => {
 });
 
 autoUpdater.on("update-available", async (_event, releaseNotes, releaseName) => {
-  if(isProd)
-  {
-    window.location.href = 'app://./update.html';
-  }
-  
+
   const dialogOpts = {
     type: 'info',
     buttons: ['Ok'],
