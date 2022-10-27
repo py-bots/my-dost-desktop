@@ -1,5 +1,5 @@
 {
-    "private": true,
+  
     "name": "my-dost",
     "description": "Advanced Python Made Simple",
     "version": "1.0.11",
@@ -10,7 +10,7 @@
         "Nexbuild": "nextron build && electron-builder build  --win --publish never",
         "postinstall": "electron-builder install-app-deps",
         "build": "electron-builder build  --win --publish never",
-        "deploy": "electron-builder build  --win --publish always"
+        "deploy": "nextron build && electron-builder build  --win --publish always"
     },
     "dependencies": {
         "@blockly/block-plus-minus": "^2.0.39",
