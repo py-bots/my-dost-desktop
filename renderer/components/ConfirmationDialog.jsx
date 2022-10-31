@@ -26,8 +26,8 @@ const ConfirmationDialogProvider = ({ children }) => {
   const [dialogConfig, setDialogConfig] = React.useState({});
 
   const openDialog = ({ title, message, actionCallback }) => {
-    console.log('openDialog -> setDialogOpen', setDialogOpen)
-    console.log('openDialog -> dialogOpen', dialogOpen)
+    //console.log('openDialog -> setDialogOpen', setDialogOpen)
+    //console.log('openDialog -> dialogOpen', dialogOpen)
     setDialogOpen(true);
     setDialogConfig({ title, message, actionCallback });
   };

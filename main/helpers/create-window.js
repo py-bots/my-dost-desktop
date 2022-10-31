@@ -80,7 +80,7 @@ export default function createWindow(windowName, options) {
   
   });
   win.once('ready-to-show', () => {
-    console.log("checking for updates");
+    //console.log("checking for updates");
     autoUpdater.checkForUpdatesAndNotify();
   });
 

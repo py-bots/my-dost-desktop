@@ -15,11 +15,11 @@ function GetStarted() {
     async function setName(e) {
         setUsername(e.target.value);
         //TODO: Change it to a global state later
-        console.log(window.location.href); 
+        //console.log(window.location.href); 
         localStorage.setItem('username', e.target.value);
     }
     async function submitName(e) {
-        console.log("Submit name called");
+       // console.log("Submit name called");
         await setUserName(localStorage.getItem('username')); //to db
     }
 

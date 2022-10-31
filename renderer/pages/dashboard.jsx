@@ -29,7 +29,7 @@ function notificationWindow() {
       });
 
       ipcRenderer.on('download_progress', (event, log_message) => {
-        console.log(log_message);
+        //console.log(log_message);
         setNotifText(log_message);
         return () => {
           ipcRenderer.removeAllListeners('update_available');
@@ -72,7 +72,7 @@ function notificationWindow() {
     const [error, setError] = React.useState('');
   
     React.useEffect(() => {
-      console.log('useEffect');
+      //console.log('useEffect');
       version_info().then((data) => {
         if (data.error) {
           setError(data.error);
@@ -102,14 +102,14 @@ export default function Example() {
     const [username, setUsername] = useState('');
 
     useEffect( () =>  {
-        console.log(bots)
+        //console.log(bots)
         async function getDataFromDB() {
             const userName = await getUserName(); 
             const dbData = await getAllBots();
             if (dbData) {
                 setBots(dbData);
             }
-            console.log(JSON.stringify(dbData));//from db 
+            //console.log(JSON.stringify(dbData));//from db 
             setUsername(userName[0].name);
            
         }
@@ -135,7 +135,7 @@ export default function Example() {
     }
 
     const deleteBot = async (id) => {
-        console.log(id, 'delete');
+        //console.log(id, 'delete');
         if (bots) {
            await deleteDBBot(id); // delete bot from db
            setBots(await getAllBots());
@@ -143,12 +143,12 @@ export default function Example() {
     }
 
     const editBot = async (id) => {
-        console.log(id, 'edit');
+        //console.log(id, 'edit');
         const bot = bots.find(bot => bot.id === id);
         localStorage.setItem('bot', JSON.stringify(bot));
-        console.log("Switching to editor")
-        console.log(JSON.stringify(bot));
-       // console.log(window.location.href); 
+        //console.log("Switching to editor")
+        //console.log(JSON.stringify(bot));
+       // //console.log(window.location.href); 
        
         if(await isProduction())
         {
@@ -162,12 +162,12 @@ export default function Example() {
         
         //tried window.location.reload(); -failed 
          //tried Router.push('/editor'); - failed 
-       //// console.log(window.location.href);
+       //// //console.log(window.location.href);
         //return false; // to prevent default behaviour of form
     }
 
     const copyBot = async (id) => {
-        console.log(id, 'copy');
+        //console.log(id, 'copy');
         
             const botsArray = await getAllBots();
             const bot = botsArray.find(bot => bot.id === id);

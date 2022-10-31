@@ -18,7 +18,7 @@ exports.checkifEmpty = () => {
     const sql = "select * from SQLITE_SCHEMA";
     let stmt = db.prepare(sql);
     let result = stmt.all();
-    console.log(result); 
+   //console.log(result); 
     if (result.length == 0) {
         return true;
     } else {
@@ -38,11 +38,11 @@ exports.getAllBots  = () => {
  * @param {Bot} bot The bot
  */
 exports.addBot = (bot) => {
-    console.log("addBot");
+   //console.log("addBot");
     const sql = `INSERT INTO bots (id, name, timeStamp ,description,code,workspace ) VALUES (?,?,?,?,?,?)`;
     let stmt = db.prepare(sql);
     let info = stmt.run(bot.id, bot.title, bot.time ,bot.description, bot.code, bot.workspace);
-    console.log(info);
+   //console.log(info);
     return true ;
 }
 
@@ -50,7 +50,7 @@ exports.setUserName = (name) => {
     const sql = `INSERT INTO user (name) VALUES (?)`;
     let stmt = db.prepare(sql);
     let info = stmt.run(name);
-    console.log(info);
+   //console.log(info);
     return true ;
 }
 
@@ -62,26 +62,26 @@ exports.getUserName = () => {
 }
 
 exports.deleteBot = (id) => {
-    console.log(id)
+   //console.log(id)
     const sql = `DELETE FROM bots WHERE id = ?`;
     let stmt = db.prepare(sql);
     let info = stmt.run(id);
-    console.log(info);
+   //console.log(info);
     return true ;
 }
 
 exports.updateBot = (bot) => {
-    console.log("updateBot");
-    console.log(bot);
+   //console.log("updateBot");
+   //console.log(bot);
 
-    // console.log(JSON.stringify(bot));
-    console.log(bot.workspace)
-    console.log(bot.name)
-    console.log(bot.id)
+    ////console.log(JSON.stringify(bot));
+   //console.log(bot.workspace)
+   //console.log(bot.name)
+   //console.log(bot.id)
     const sql = `UPDATE bots SET name = ? , timeStamp = ? , description = ? , code = ? , workspace = ? WHERE id = ?`;
     let stmt = db.prepare(sql);
     let info = stmt.run(bot.name, bot.timeStamp ,bot.description, bot.code, bot.workspace, bot.id);
-    console.log(info);
+   //console.log(info);
     return true ;
 }
 

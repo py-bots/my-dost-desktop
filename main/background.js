@@ -23,6 +23,7 @@ if (isProd) {
       // devTools: false
     }
   });
+  mainWindow.removeMenu();
   const empty = storageAct.checkifEmpty();
   if (isProd) {
 
@@ -58,7 +59,7 @@ autoUpdater.on("update-available", async (_event, releaseNotes, releaseName) => 
     detail: 'A new version is being downloaded.'
   }
   dialog.showMessageBox(dialogOpts, (response) => {
-    console.log(response);
+    //console.log(response);
   });
 })
 
@@ -67,7 +68,7 @@ autoUpdater.on('download-progress', (progressObj) => {
   let log_message = "Download speed: " + progressObj.bytesPerSecond;
   log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
   log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
-  console.log(log_message);
+  //console.log(log_message);
   mainWindow.webContents.send('download-progress', log_message);
   //send the log nessage 
   
@@ -131,19 +132,19 @@ ipcMain.handle('runScript', (event, args) => {
         mode: 'text',
         pythonPath: path,
       };
-      console.log("path is " + path);
+      //console.log("path is " + path);
       PythonShell.runString(args.codeString, options, function (err, results) {
         if (err) throw err;
         resolve(results);
       });
     } catch (error) {
-      console.log("error occured " + error);
+      //console.log("error occured " + error);
       reject(error);
     }
   }
   )
   return run.then((result) => {
-    console.log(result);
+    //console.log(result);
     return result;
   }
   ).catch((error) => {

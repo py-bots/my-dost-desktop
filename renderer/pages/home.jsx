@@ -57,7 +57,7 @@ function getVersion() {
   const [error, setError] = React.useState('');
 
   React.useEffect(() => {
-    console.log('useEffect');
+
     version_info().then((data) => {
       if (data.error) {
         setError(data.error);
