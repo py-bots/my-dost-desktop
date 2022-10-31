@@ -87,7 +87,7 @@ function Next() {
   }
   //bot workspace is actually the xml
   const updateXml = async (workspace) => {
-    console.log("called")
+    // console.log("called")
 
     if (workspace == '<xml xmlns="https://developers.google.com/blockly/xml"></xml>' || workspace == '<xml xmlns="http://www.w3.org/1999/xhtml"></xml>') {
       // console.log(JSON.parse (localStorage.getItem('bot')).workspace)

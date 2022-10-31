@@ -130,3 +130,4 @@ app/*.js
 app/
 electron-builder.yml
 
+electron-builder.env

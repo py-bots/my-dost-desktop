@@ -1,4 +1,4 @@
-import { app, dialog, ipcMain} from 'electron';
+import { app, dialog, ipcMain } from 'electron';
 import serve from 'electron-serve';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
@@ -16,11 +16,11 @@ if (isProd) {
 
 (async () => {
   await app.whenReady();
-   mainWindow = createWindow('main', {
+  mainWindow = createWindow('main', {
     width: 1000,
     height: 600,
     webPreferences: {
-      // devTools: false
+      devTools: isProd ? false : true,
     }
   });
   mainWindow.removeMenu();
@@ -71,7 +71,7 @@ autoUpdater.on('download-progress', (progressObj) => {
   //console.log(log_message);
   mainWindow.webContents.send('download-progress', log_message);
   //send the log nessage 
-  
+
 })
 
 autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
@@ -126,7 +126,7 @@ ipcMain.on('restart_app', () => {
 ipcMain.handle('runScript', (event, args) => {
   var run = new Promise((resolve, reject) => {
     try {
-      var path = args.pythonPath && args.pythonPath != '' ? args.pythonPath : 'C:\\Users\\Public\\PyBots\\My-AutoPylot\\support\\python.exe';
+      var path = args.pythonPath && args.pythonPath != '' ? args.pythonPath : 'C:\\Users\\Public\\PyBots\\My-DOST\\support\\python.exe';
       let options =
       {
         mode: 'text',

@@ -1,16 +1,15 @@
 {
-  
     "name": "my-dost",
     "description": "Advanced Python Made Simple",
-    "version": "0.0.1",
-    "author": "Murali M V P <mmv@pybots.ai>",
+    "version": "0.0.2",
+    "author": "PyBOTS LLC <support@pybots.ai>",
     "main": "app/background.js",
     "scripts": {
         "dev": "nextron",
-        "Nexbuild": "nextron build && electron-builder build  --win --publish never",
+        "build": "nextron build --all",
+        "build:win": "nextron build --win",
         "postinstall": "electron-builder install-app-deps",
-        "build": "electron-builder build  --win --publish never",
-        "deploy": "nextron build && electron-builder build  --win --publish always"
+        "release": "electron-builder"
     },
     "dependencies": {
         "@blockly/block-plus-minus": "^2.0.39",
@@ -44,7 +43,6 @@
         "autoprefixer": "^10.4.7",
         "electron": "19.1.0",
         "electron-builder": "^23.3.3",
-        "electron-rebuild": "^3.2.9",
         "next": "^12.2.5",
         "nextron": "^8.2.0",
         "postcss": "^8.4.13",
