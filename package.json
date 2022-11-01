@@ -1,7 +1,7 @@
 {
-    "name": "my-dost",
+    "name": "dost",
     "description": "Advanced Python Made Simple",
-    "version": "0.0.2",
+    "version": "0.0.1",
     "author": "PyBOTS LLC <support@pybots.ai>",
     "main": "app/background.js",
     "scripts": {

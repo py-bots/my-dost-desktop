@@ -1,4 +1,5 @@
 import { app, dialog, ipcMain } from 'electron';
+const path = require('path');
 import serve from 'electron-serve';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
@@ -126,11 +127,12 @@ ipcMain.on('restart_app', () => {
 ipcMain.handle('runScript', (event, args) => {
   var run = new Promise((resolve, reject) => {
     try {
-      var path = args.pythonPath && args.pythonPath != '' ? args.pythonPath : 'C:\\Users\\Public\\PyBots\\My-DOST\\support\\python.exe';
+      var pre_def_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'support', 'python.exe');
+      var pyPath = args.pythonPath && args.pythonPath != '' ? args.pythonPath : pre_def_path;
       let options =
       {
         mode: 'text',
-        pythonPath: path,
+        pythonPath: pyPath,
       };
       //console.log("path is " + path);
       PythonShell.runString(args.codeString, options, function (err, results) {
