@@ -30,6 +30,7 @@
         "electron-serve": "^1.1.0",
         "electron-store": "^8.1.0",
         "electron-updater": "^5.2.1",
+        "node-schedule": "^2.1.0",
         "python-shell": "^3.0.1",
         "react-blockly": "^7.0.1",
         "react-code-blocks": "^0.0.9-0",
