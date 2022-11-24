@@ -1,10 +1,11 @@
-import { app, dialog, ipcMain} from 'electron';
+import { app, dialog, ipcMain, Tray ,Menu, nativeImage} from 'electron';
 import serve from 'electron-serve';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
 const storageAct = require('./helpers/storageActivities.js');
 import { PythonShell } from 'python-shell';
-
+const path = require('path');
+var  isWindowOpen = false; 
 const isProd = process.env.NODE_ENV === 'production';
 let mainWindow
 if (isProd) {
@@ -13,7 +14,62 @@ if (isProd) {
   app.setPath('userData', `${app.getPath('userData')} (development)`);
 }
 
+let tray = null
+function createTray () {
+  console.log(__dirname+'//images//logo.png'); 
+  const icon = path.join(__dirname, '/../resources/icon.ico') // required.
+  const trayicon = nativeImage.createFromPath(icon) ; 
+  tray = new Tray(trayicon.resize({ width: 16 })) 
+  ;
+  tray.setToolTip('My Dost Application')
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show App',
+      click: async ()  =>  {
+        if (isWindowOpen) {
+          return ; 
+        }
 
+         mainWindow = createWindow('main', {
+          width: 800,
+          height: 600,
+        });
+        console.log(mainWindow);
+        mainWindow.removeMenu();
+        isWindowOpen = true; 
+  const empty = storageAct.checkifEmpty();
+  if (isProd) {
+
+    if (empty) {
+      await mainWindow.loadURL('app://./get_started.html');
+    } else {
+      await mainWindow.loadURL('app://./dashboard.html');
+    }
+  } else {
+    const port = process.argv[2];
+    if (empty) {
+      await mainWindow.loadURL(`http://localhost:${port}/get_started`);
+    } else {
+      await mainWindow.loadURL(`http://localhost:${port}/dashboard`);
+    }
+    //mainWindow.webContents.openDevTools();
+  }
+  //init db table 
+  
+  storageAct.createBotTable();
+      }
+    },
+    {type: "separator"},
+    {
+      label: 'Quit',
+      click: () => {
+        app.quit() // actually quit the app.
+      }
+    },
+  ])
+
+  tray.setContextMenu(contextMenu)
+}
 (async () => {
   await app.whenReady();
    mainWindow = createWindow('main', {
@@ -23,6 +79,9 @@ if (isProd) {
       // devTools: false
     }
   });
+  if (!tray) { // if tray hasn't been created already.
+    createTray()
+  }
   mainWindow.removeMenu();
   const empty = storageAct.checkifEmpty();
   if (isProd) {
@@ -39,14 +98,28 @@ if (isProd) {
     } else {
       await mainWindow.loadURL(`http://localhost:${port}/dashboard`);
     }
-    mainWindow.webContents.openDevTools();
+   // mainWindow.webContents.openDevTools();
   }
   //init db table 
+  
   storageAct.createBotTable();
 })();
 
-app.on('window-all-closed', () => {
-  app.quit();
+
+app.on('window-all-closed', (event) => {
+  //console.log('close12')
+  isWindowOpen = false; 
+  event.preventDefault();
+  // mainWindow.hide();  // hide the app.
+  //for mac Os it is app.dock.hide()
+});
+
+
+app.on('window-close', (event) => {
+  console.log('close')
+  event.preventDefault();
+  // mainWindow.hide();  // hide the app.
+  //for mac Os it is app.dock.hide()
 });
 
 autoUpdater.on("update-available", async (_event, releaseNotes, releaseName) => {
