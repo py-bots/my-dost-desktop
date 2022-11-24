@@ -72,11 +72,11 @@ function createTray () {
 }
 (async () => {
   await app.whenReady();
-   mainWindow = createWindow('main', {
+  mainWindow = createWindow('main', {
     width: 1000,
     height: 600,
     webPreferences: {
-      // devTools: false
+      devTools: isProd ? false : true,
     }
   });
   if (!tray) { // if tray hasn't been created already.
@@ -144,7 +144,7 @@ autoUpdater.on('download-progress', (progressObj) => {
   //console.log(log_message);
   mainWindow.webContents.send('download-progress', log_message);
   //send the log nessage 
-  
+
 })
 
 autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
@@ -199,11 +199,12 @@ ipcMain.on('restart_app', () => {
 ipcMain.handle('runScript', (event, args) => {
   var run = new Promise((resolve, reject) => {
     try {
-      var path = args.pythonPath && args.pythonPath != '' ? args.pythonPath : 'C:\\Users\\Public\\PyBots\\My-AutoPylot\\support\\python.exe';
+      var pre_def_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'support', 'python.exe');
+      var pyPath = args.pythonPath && args.pythonPath != '' ? args.pythonPath : pre_def_path;
       let options =
       {
         mode: 'text',
-        pythonPath: path,
+        pythonPath: pyPath,
       };
       //console.log("path is " + path);
       PythonShell.runString(args.codeString, options, function (err, results) {
