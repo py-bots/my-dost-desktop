@@ -71,13 +71,7 @@ exports.deleteBot = (id) => {
 }
 
 exports.updateBot = (bot) => {
-    //console.log("updateBot");
-    //console.log(bot);
 
-    ////console.log(JSON.stringify(bot));
-    //console.log(bot.workspace)
-    //console.log(bot.name)
-    //console.log(bot.id)
     const sql = `UPDATE bots SET name = ? , timeStamp = ? , description = ? , code = ? , workspace = ? WHERE id = ?`;
     let stmt = db.prepare(sql);
     let info = stmt.run(bot.name, bot.timeStamp, bot.description, bot.code, bot.workspace, bot.id);

@@ -3,7 +3,7 @@ import serve from 'electron-serve';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
 const storageAct = require('./helpers/storageActivities.js');
-import { PythonShell } from 'python-shell';
+const pyAct = require('./helpers/pyActivities.js');
 const path = require('path');
 var  isWindowOpen = false; 
 const isProd = process.env.NODE_ENV === 'production';
@@ -197,34 +197,10 @@ ipcMain.on('restart_app', () => {
 
 
 ipcMain.handle('runScript', (event, args) => {
-  var run = new Promise((resolve, reject) => {
-    try {
-      var pre_def_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'support', 'python.exe');
-      var pyPath = args.pythonPath && args.pythonPath != '' ? args.pythonPath : pre_def_path;
-      let options =
-      {
-        mode: 'text',
-        pythonPath: pyPath,
-      };
-      //console.log("path is " + path);
-      PythonShell.runString(args.codeString, options, function (err, results) {
-        if (err) throw err;
-        resolve(results);
-      });
-    } catch (error) {
-      //console.log("error occured " + error);
-      reject(error);
-    }
-  }
-  )
-  return run.then((result) => {
-    //console.log(result);
-    return result;
-  }
-  ).catch((error) => {
-    return error;
-  }
-  )
+
+  args.pre_def_path =  path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'support', 'python.exe');
+  return pyAct.runScript(args); 
+
 });
 
 
