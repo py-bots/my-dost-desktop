@@ -1,16 +1,63 @@
 import { PlusIcon } from '@heroicons/react/20/solid'
-import { Fab } from '@mui/material';
+import { Button, Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Modal from '../components/Model'
 import BasicTable from '../components/Table';
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import uuid from 'react-uuid';
 import { addBot, deleteDBBot, getAllBots, getUserName } from '../components/db-components';
 import { isProduction } from '../components/coderun-components';
 import React from 'react';
 import { version_info } from '../components/server-components.js';
 import { ipcRenderer } from 'electron';
+import DatePicker from "react-multi-date-picker"
+import {TimePicker} from 'react-time-picker/dist/entry.nostyle' ; 
+import "react-time-picker/dist/TimePicker.css" ;
+import "react-clock/dist/Clock.css" ;
+import { setSchedule } from '../components/schedule-components';
+var Bot = require('../../main/models/bot_model.js');
+var Cron = require('../../main/models/cron_model.js')
 
+
+const weekDays = ["S", "M", "T", "W", "T", "F", "S"]
+
+function SchedulePickerWindow(){
+    var [value, onChange] = React.useState('10:00');
+    var [selectedDays, setSelectedDays] = React.useState([1, 2, 3, 4, 5, 6, 7]);
+    
+
+    const scheduleBot = () => {
+        console.log("Schedule bot");
+       // SetHiddenWindow(true);
+    }
+    const onDayChange = (selectedDays) => {
+        console.log(selectedDays);
+        setSelectedDays(selectedDays);
+    }
+    const onTimeChange = (value) => {
+        console.log(value);
+        onChange(value);
+    }
+
+
+    return(
+        
+        <div>
+            <DatePicker
+                weekDays={weekDays}
+                value={selectedDays}
+                onChange={onDayChange}
+                />
+            <TimePicker
+                onChange={onTimeChange}
+                value={value}
+                />
+            <Button variant="contained" onClick={() => {}}>Schedule</Button>
+        </div>
+    )
+
+
+}
 
 
 
@@ -89,15 +136,13 @@ function getVersion() {
     );
 }
 
-
-
-
-
 export default function Example() {
 
-    const [open, setOpen] = useState(false);
-    const [bots, setBots] = useState([]);
-    const [username, setUsername] = useState('');
+    const [open, setOpen] = React.useState(false);
+    const [bots, setBots] = React.useState([]);
+    const [username, setUsername] = React.useState('');
+    var [showScheduleWindow, setShowScheduleWindow] = React.useState(false);
+    
 
     useEffect(() => {
         // console.log(bots)
@@ -117,15 +162,10 @@ export default function Example() {
     const formSubmitted = async (e) => {
         e.preventDefault();
         const bot_name = e.target.floating_name.value;
+        console.log(bot_name);
         const bot_description = e.target.floating_description.value;
-        const bot = {
-            'id': uuid(),
-            'title': bot_name,
-            'description': bot_description,
-            'time': new Date().toLocaleString(),
-            'workspace': '',
-            'code': '',
-        }
+        const bot = new Bot(uuid(), bot_name,bot_description , new Date().toLocaleString()) ; 
+
         await addBot(bot); // add bot to db
 
         setBots(await getAllBots());
@@ -144,9 +184,7 @@ export default function Example() {
         // console.log(id, 'edit');
         const bot = bots.find(bot => bot.id === id);
         localStorage.setItem('bot', JSON.stringify(bot));
-        // console.log("Switching to editor")
-        // console.log(JSON.stringify(bot));
-        // console.log(window.location.href);
+
 
         if (await isProduction()) {
             window.location.href = 'app://./editor.html';
@@ -154,8 +192,6 @@ export default function Example() {
         else {
             window.location.href = "/editor";
         }
-
-
         //tried window.location.reload(); -failed 
         //tried Router.push('/editor'); - failed 
         // console.log(window.location.href);
@@ -167,18 +203,21 @@ export default function Example() {
 
         const botsArray = await getAllBots();
         const bot = botsArray.find(bot => bot.id === id);
-        const newBot = {
-            'id': uuid(),
-            'title': '(Copy) ' + bot.name,
-            'description': bot.description,
-            'time': new Date().toLocaleString(),
-            'workspace': bot.workspace,
-            'code': bot.code,
-
-        }
+        const newName = "(copy) " + bot.name ;
+        const newBot = new Bot(uuid(), newName, bot.description, new Date().toLocaleString() ,bot.code , bot.workspace , false);
         await addBot(newBot); // add bot to db
         setBots(await getAllBots());
 
+    }
+
+    const scheduleBot = async (id) => {
+        console.log(id, 'schedule');
+        const bot = bots.find(bot => bot.id === id);
+        const cronObj = new Cron(new Date().toLocaleTimeString() , [0,1,0,1,1,1,1])
+        console.log(cronObj);
+        console.log(cronObj.toUsable());
+        await setSchedule(bot, cronObj);
+       // setShowScheduleWindow(true);
     }
 
 
@@ -194,6 +233,7 @@ export default function Example() {
 
                                 </span> Dashboard
                                 {notificationWindow()}
+                                {showScheduleWindow && SchedulePickerWindow()}
                             </h1>
                         </div>
                     </header>
@@ -204,7 +244,7 @@ export default function Example() {
                         {getVersion()}
                         {(bots && bots.length > 0) ? (
                             <div>
-                                <BasicTable data={bots} handleCopy={copyBot} handleEdit={editBot} handleDelete={deleteBot} />
+                                <BasicTable data={bots} handleCopy={copyBot} handleEdit={editBot} handleDelete={deleteBot} handleSchedule = {scheduleBot}/>
                                 <Fab color="primary" aria-label="add" sx={
                                     {
                                         position: 'absolute',

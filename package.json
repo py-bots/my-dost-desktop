@@ -37,7 +37,10 @@
         "react-datepicker": "^4.8.0",
         "react-icons": "^4.6.0",
         "react-logger": "^1.1.0",
+        "react-multi-date-picker": "^3.3.4",
+        "react-time-picker": "^5.1.0",
         "react-uuid": "^1.0.3",
+        "react-weekday-picker": "^1.0.8",
         "sqlite-electron": "^2.0.5"
     },
     "devDependencies": {

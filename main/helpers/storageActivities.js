@@ -1,11 +1,17 @@
 var dbmgr = require('./dbInit.js');
 var db = dbmgr.db;
-const Bot = require('../models/bot_model.js');
+const Bot = require('../models/bot_model.js').default;
 
 
 exports.createBotTable = () => {
+    //single time use for dev purposes
+    // const sqql = "Drop table bots"; 
+    // let stmtt = db.prepare(sqql);
+    // let info = stmtt.run();
 
-    const sql = "CREATE TABLE IF NOT EXISTS bots (id TEXT PRIMARY KEY , name TEXT, timeStamp TEXT , description TEXT, code TEXT, workspace TEXT)";
+
+
+    const sql = "CREATE TABLE IF NOT EXISTS bots (id TEXT PRIMARY KEY , name TEXT, timeStamp TEXT , description TEXT, code TEXT, workspace TEXT , py_file_path TEXT , isScheduled BOOLEAN)";
     const sqlsecond = "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY , name VARCHAR(45) NOT NULL)";
     let stmt = db.prepare(sql);
     let stmt2 = db.prepare(sqlsecond);
@@ -38,10 +44,10 @@ exports.getAllBots = () => {
  * @param {Bot} bot The bot
  */
 exports.addBot = (bot) => {
-    //console.log("addBot");
-    const sql = `INSERT INTO bots (id, name, timeStamp ,description,code,workspace ) VALUES (?,?,?,?,?,?)`;
+    console.log(bot);
+    const sql = `INSERT INTO bots (id, name, timeStamp ,description,code,workspace,isScheduled,py_file_path ) VALUES (?,?,?,?,?,?,?,?)`;
     let stmt = db.prepare(sql);
-    let info = stmt.run(bot.id, bot.title, bot.time, bot.description, bot.code, bot.workspace);
+    let info = stmt.run(bot.id, bot.name, bot.timeStamp, bot.description, bot.code, bot.workspace,bot.isScheduled?1:0,bot.py_file_path);
     //console.log(info);
     return true;
 }
@@ -71,11 +77,27 @@ exports.deleteBot = (id) => {
 }
 
 exports.updateBot = (bot) => {
-
-    const sql = `UPDATE bots SET name = ? , timeStamp = ? , description = ? , code = ? , workspace = ? WHERE id = ?`;
+    console.log("Code recieved : " + bot.code ); 
+    const sql = `UPDATE bots SET name = ? , timeStamp = ? , description = ? , code = ? , workspace = ?, isScheduled = ?,py_file_path = ? WHERE id = ?`;
     let stmt = db.prepare(sql);
-    let info = stmt.run(bot.name, bot.timeStamp, bot.description, bot.code, bot.workspace, bot.id);
+    let info = stmt.run(bot.name, bot.timeStamp, bot.description, bot.code, bot.workspace,bot.isScheduled, bot.py_file_path, bot.id);
+    //console.log(info);
+    return true;
+}
+exports.updateBotFilePath = (bot) => {
+    console.log("Path recieved : " + bot.py_file_path );
+    const sql = `UPDATE bots SET py_file_path = ? WHERE id = ?`;
+    let stmt = db.prepare(sql);
+    let info = stmt.run(bot.py_file_path, bot.id);
     //console.log(info);
     return true;
 }
 
+exports.updateBotisScheduled = (bot) => {
+    console.log("isScheduled recieved : " + bot.isScheduled );
+    const sql = `UPDATE bots SET isScheduled = ? WHERE id = ?`;
+    let stmt = db.prepare(sql);
+    let info = stmt.run(bot.isScheduled, bot.id);
+    //console.log(info);
+    return true;
+}

@@ -4,6 +4,7 @@ import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
 const storageAct = require('./helpers/storageActivities.js');
 const pyAct = require('./helpers/pyActivities.js');
+const scheduleAct = require('./helpers/scheduleActivities.js');
 const path = require('path');
 var  isWindowOpen = false; 
 const isProd = process.env.NODE_ENV === 'production';
@@ -52,7 +53,7 @@ function createTray () {
     } else {
       await mainWindow.loadURL(`http://localhost:${port}/dashboard`);
     }
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   }
   //init db table 
   
@@ -98,7 +99,7 @@ function createTray () {
     } else {
       await mainWindow.loadURL(`http://localhost:${port}/dashboard`);
     }
-   // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   }
   //init db table 
   
@@ -220,7 +221,20 @@ ipcMain.handle('get-python-path', (event) => {
     }
   }
   );
-
-
-
 });
+
+
+ipcMain.handle('set-schedule', async (event,args) => {
+
+  if(args.bot.py_file_path == "NotSet" || !args.bot.py_file_path )
+  { 
+    console.log("No py file path set") ;
+    args.bot.py_file_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'py_files_folder', args.bot.name) + ".py";
+  }
+  console.log("bot file path : "+args.bot.py_file_path) ;
+  storageAct.updateBotFilePath(args.bot);
+  await pyAct.saveScriptFile(args.bot);
+  console.log("Py Script Saved Successfully")
+  scheduleAct.setSchedule(args.bot, args.cronObj);
+  console.log("Schedule Set Successfully")
+}); 

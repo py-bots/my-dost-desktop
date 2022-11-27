@@ -1,16 +1,23 @@
 
-class Bot {
-    constructor(id , name , description = "some description" ,code = "12345", workspace = "xml String" ) {
+ class Bot {
+    constructor(id, name, description = "some description", timeStamp = "",code = "Drag and drop blocks to generate code", workspace = "" , isScheduled =false) {
         this.name = name;
         this.description = description;
         this.code = code;
         this.workspace = workspace;
         this.id = id;
-        this.isScedhuled = false; 
-        this.scheduleJob = null;
+        this.timeStamp = timeStamp;
+        this.isScheduled = isScheduled;
+        this.py_file_path = "NotSet";
     }
     static botFromJson(json) {
         return new Bot(json.id, json.name, json.description, json.code, json.workspace);
     }
 
+    setPyFilePath(path)
+    {
+        this.py_file_path = path;
+    }
+
 }
+module.exports = Bot;
