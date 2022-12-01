@@ -15,3 +15,14 @@ export async function setSchedule(Bot, cronObj) {
     }
 
 }
+
+export async function removeSchedule(bot_id) {
+    try {
+        var res = await ipcRenderer.invoke("remove-schedule", {bot_id:bot_id});
+        return res;
+    }
+    catch (error) {
+        // console.log("error occured " + error);
+    }
+
+}

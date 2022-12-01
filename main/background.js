@@ -104,6 +104,8 @@ function createTray () {
   //init db table 
   
   storageAct.createBotTable();
+  scheduleAct.loadAllSchedules(); 
+  // get all cron jobs running again 
 })();
 
 
@@ -180,7 +182,8 @@ ipcMain.handle('DBgetUserName', (event) => {
 });
 
 ipcMain.handle('DBdeleteBot', (event, args) => {
-  return storageAct.deleteBot(args.id);
+  return storageAct.deleteBot(args.id) && scheduleAct.removeSchedule(args.id) && pyAct.deleteScriptFile({py_file_path : path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'py_files_folder', args.id) + ".py"});
+
 });
 
 ipcMain.handle('DBupdateBot', (event, args) => {
@@ -229,12 +232,31 @@ ipcMain.handle('set-schedule', async (event,args) => {
   if(args.bot.py_file_path == "NotSet" || !args.bot.py_file_path )
   { 
     console.log("No py file path set") ;
-    args.bot.py_file_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'py_files_folder', args.bot.name) + ".py";
+    args.bot.py_file_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'py_files_folder', args.bot.id) + ".py";
   }
   console.log("bot file path : "+args.bot.py_file_path) ;
   storageAct.updateBotFilePath(args.bot);
+  
   await pyAct.saveScriptFile(args.bot);
   console.log("Py Script Saved Successfully")
-  scheduleAct.setSchedule(args.bot, args.cronObj);
-  console.log("Schedule Set Successfully")
+  var scheduled = scheduleAct.setSchedule(args.bot.id, args.cronObj);
+  if(scheduled)
+  {
+    console.log("Schedule Set Successfully")
+    args.bot.isScheduled = true;
+    storageAct.updateBot(args.bot);
+  }
+ 
 }); 
+
+ipcMain.handle('remove-schedule', (event,args) => {
+  var removed = scheduleAct.removeSchedule(args.bot_id);
+  if(removed)
+  {
+    console.log("Schedule Removed Successfully")
+    args.bot.isScheduled = false;
+    storageAct.updateBot(args.bot);
+  }
+
+});
+

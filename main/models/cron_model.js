@@ -11,7 +11,11 @@ class Cron{
 
         if(this.isDaily)
         {
-            this.cronString = this.time + " * * * *"; 
+            let time = this.time.split(":");
+            let minute = time[1];
+            let hour = time[0];
+            this.cronString = `${minute} ${hour} * * *`;
+            console.log(this.cronString); 
             return this.cronString; 
         }
         let time = this.time.split(":");

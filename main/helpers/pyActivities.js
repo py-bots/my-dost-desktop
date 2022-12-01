@@ -88,3 +88,16 @@ export async function saveScriptFile(args)
     fs.writeFileSync(args.py_file_path, args.code);
     console.log("File Saved");
 }
+
+export async function deleteScriptFile(args)
+{
+ 
+  if(fs.existsSync(args.py_file_path))
+  {
+    fs.unlinkSync(args.py_file_path);
+    console.log("File Deleted");
+    return true ; 
+  }
+  return false;
+  
+}

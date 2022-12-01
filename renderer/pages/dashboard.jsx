@@ -14,7 +14,9 @@ import DatePicker from "react-multi-date-picker"
 import {TimePicker} from 'react-time-picker/dist/entry.nostyle' ; 
 import "react-time-picker/dist/TimePicker.css" ;
 import "react-clock/dist/Clock.css" ;
-import { setSchedule } from '../components/schedule-components';
+import { setSchedule,removeSchedule } from '../components/schedule-components';
+import { deleteScriptFile } from '../../main/helpers/pyActivities';
+
 var Bot = require('../../main/models/bot_model.js');
 var Cron = require('../../main/models/cron_model.js')
 
@@ -173,11 +175,12 @@ export default function Example() {
     }
 
     const deleteBot = async (id) => {
-        // console.log(id, 'delete');
+        console.log(id, 'delete');
         if (bots) {
             await deleteDBBot(id); // delete bot from db
             setBots(await getAllBots());
         }
+       
     }
 
     const editBot = async (id) => {
@@ -213,7 +216,7 @@ export default function Example() {
     const scheduleBot = async (id) => {
         console.log(id, 'schedule');
         const bot = bots.find(bot => bot.id === id);
-        const cronObj = new Cron(new Date().toLocaleTimeString() , [0,1,0,1,1,1,1])
+        const cronObj = new Cron("21:44", [0,1,0,1,1,1,1],true)
         console.log(cronObj);
         console.log(cronObj.toUsable());
         await setSchedule(bot, cronObj);
