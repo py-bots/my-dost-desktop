@@ -244,18 +244,18 @@ ipcMain.handle('set-schedule', async (event,args) => {
   {
     console.log("Schedule Set Successfully")
     args.bot.isScheduled = true;
-    storageAct.updateBot(args.bot);
+    storageAct.updateBotisScheduled(args.bot);
   }
  
 }); 
 
 ipcMain.handle('remove-schedule', (event,args) => {
-  var removed = scheduleAct.removeSchedule(args.bot_id);
+  var removed = scheduleAct.removeSchedule(args.bot.id);
   if(removed)
   {
     console.log("Schedule Removed Successfully")
     args.bot.isScheduled = false;
-    storageAct.updateBot(args.bot);
+    storageAct.updateBotisScheduled(args.bot);
   }
 
 });

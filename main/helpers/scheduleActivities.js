@@ -1,13 +1,13 @@
 const schedule = require('node-schedule');
 const storageAct = require('./storageActivities.js');
-
+const pyAct = require('./pyActivities.js');
 export async function setSchedule(bot_id, cronObj) {
     try {
         console.log(cronObj);
         storageAct.saveScheduleToDB(bot_id, cronObj.cronString);
         schedule.scheduleJob(bot_id, cronObj.cronString, function () {
             console.log("This ran at" + new Date().toISOString() + " for bot id " + bot_id);
-
+            pyAct.runScriptFile({bot_id:bot_id});
         })
         return true;
     } catch (err) {
@@ -20,7 +20,7 @@ export async function loadSchedule(bot_id, cronString) {
     console.log(cronString);
     schedule.scheduleJob(bot_id, cronString, function () {
         console.log("This ran at" + new Date().toISOString() + " for bot " + bot_id);
-
+        pyAct.runScriptFile({bot_id:bot_id});
     })
 }
 

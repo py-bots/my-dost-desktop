@@ -212,14 +212,30 @@ export default function Example() {
         setBots(await getAllBots());
 
     }
+    const removeBotSchedule = async (id) => {
+        // console.log(id, 'remove schedule');
+        const bot = bots.find(bot => bot.id === id);
+        removeSchedule(bot);
+        setBots(await getAllBots());
+        return ;
+    }
 
     const scheduleBot = async (id) => {
         console.log(id, 'schedule');
         const bot = bots.find(bot => bot.id === id);
-        const cronObj = new Cron("21:44", [0,1,0,1,1,1,1],true)
+        if(bot.isScheduled){ //this will change once there is proper ui to invoke the other function remove Schedule 
+            console.log("bot is already scheduled !!!");
+            removeSchedule(bot);
+            setBots(await getAllBots());
+            return ;
+        }
+        //change till here 
+        //cron input format -> hour (24 hour fornat):minute, [days of week by 1 and 0s], boolean for daily
+        const cronObj = new Cron("0:*", [0,1,0,1,1,1,1],true) //input dump point for ui 
         console.log(cronObj);
         console.log(cronObj.toUsable());
         await setSchedule(bot, cronObj);
+        setBots(await getAllBots());
        // setShowScheduleWindow(true);
     }
 

@@ -96,7 +96,7 @@ export default function BasicTable({ data, handleDelete, handleEdit, handleCopy 
                                     }}>
                                         <ContentCopyIcon />
                                     </IconButton>
-                                    <IconButton aria-label="schedule" size="small" onClick={() => {
+                                    <IconButton aria-label="schedule" size="small" color = {row.isScheduled?"primary":"error"}  onClick={() => {
                                         handleSchedule(row.id)
                                     }}>
                                         <AccessTimeIcon />

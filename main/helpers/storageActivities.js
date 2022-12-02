@@ -95,12 +95,20 @@ exports.updateBotFilePath = (bot) => {
 
 exports.updateBotisScheduled = (bot) => {
     console.log("isScheduled recieved : " + bot.isScheduled );
+    const val = bot.isScheduled?1:0;
     const sql = `UPDATE bots SET isScheduled = ? WHERE id = ?`;
     let stmt = db.prepare(sql);
-    let info = stmt.run(bot.isScheduled, bot.id);
+    let info = stmt.run(val, bot.id);
     //console.log(info);
     return true;
 }
+exports.getBotFilePath = (id) =>{
+    const sql = `SELECT py_file_path FROM bots WHERE id = ?`;
+    let stmt = db.prepare(sql);
+    let rows = stmt.all(id);
+    return rows;
+}
+
 
 
 //cron persistence 

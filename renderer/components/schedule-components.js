@@ -16,9 +16,9 @@ export async function setSchedule(Bot, cronObj) {
 
 }
 
-export async function removeSchedule(bot_id) {
+export async function removeSchedule(bot) {
     try {
-        var res = await ipcRenderer.invoke("remove-schedule", {bot_id:bot_id});
+        var res = await ipcRenderer.invoke("remove-schedule", {bot:bot});
         return res;
     }
     catch (error) {
