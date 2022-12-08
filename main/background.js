@@ -127,7 +127,11 @@ ipcMain.on('restart_app', () => {
 ipcMain.handle('runScript', (event, args) => {
   var run = new Promise((resolve, reject) => {
     try {
-      var pre_def_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'support', 'python.exe');
+      if (isProd) {
+        var pre_def_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'support', 'python.exe');
+      } else {
+        var pre_def_path = path.join(__dirname, '..', 'support', 'python.exe');
+      }
       var pyPath = args.pythonPath && args.pythonPath != '' ? args.pythonPath : pre_def_path;
       let options =
       {
