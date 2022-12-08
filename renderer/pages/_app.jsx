@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { clarity } from 'react-microsoft-clarity';
 import React from 'react';
 import '../styles/globals.css';
 import { ConfirmationDialogProvider } from "../components/ConfirmationDialog";
@@ -12,6 +14,9 @@ const darkTheme = createTheme({
 });
 
 function MyApp({ Component, pageProps }) {
+  useEffect(() => {
+    clarity.init('ev2ivwtqeh');
+  }, []);
   return (
     <ThemeProvider theme={darkTheme}>
 
