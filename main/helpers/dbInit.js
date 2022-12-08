@@ -7,7 +7,6 @@ const dbPath = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOS
 
 if (!fs.existsSync(path.dirname(dbPath))) {
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-    // console.log('Created directory: ' + path.dirname(dbPath));
 }
 // else {
 //     // console.log('Directory already exists: ' + path.dirname(dbPath));
