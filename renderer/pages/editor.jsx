@@ -15,7 +15,7 @@ const BlocklyWorkspace = dynamic(
 )
 import { usePromptDialog } from "../components/PromptDialog";
 import ConfigFiles from '../editor/constants'
-import '../editor/BlocksData';
+import '../editor/BlockData'
 import { updateDBBot } from '../components/db-components';
 import { runCodeString } from '../components/coderun-components';
 import electron from 'electron';
@@ -28,7 +28,7 @@ function Next() {
   const { getPrompt } = usePromptDialog();
   const [xml, setXml] = useState(ConfigFiles.INITIAL_XML);
   var [bot, setBot] = useState({});
-  const [pythonCode, setPythonCode] = useState("");
+  const [pythonCode, setPythonCode] = useState("Drag and drop blocks to generate code");
   const [search, setSearch] = useState(false)
   const [outputOpen, setOutputOpen] = useState(false)
   const [pythonError, setPythonError] = useState(false)
@@ -39,7 +39,6 @@ function Next() {
   useEffect(() => {
 
     setBot(JSON.parse(localStorage.getItem('bot')));
-    setPythonCode(JSON.parse(localStorage.getItem('bot')).code)
     setXml(JSON.parse(localStorage.getItem('bot')).workspace || ConfigFiles.INITIAL_XML);
     bot.workspace = JSON.parse(localStorage.getItem('bot')).workspace;
     if (bot.workspace != '') {
@@ -101,26 +100,21 @@ function Next() {
     setXml(workspace);
     bot.workspace = workspace;
     setBot(bot);
-    console.log(pythonCode)
     bot = { ...JSON.parse(localStorage.getItem('bot')), workspace: xml, code: pythonCode, timeStamp: new Date().toLocaleString() };
-    console.log("Update BOt : " + bot);
     await updateDBBot(bot);
   }
 
   const runCodeScript = async () => {
     var results = await runCodeString(pythonCode, pythonPath);
+    if (!results) return;
     setPythonOutput(results);
+    setOutputOpen(true);
     if (results && results[results.length - 1] == "Error") {
       setPythonError(true);
     }
     else {
       setPythonError(false);
     }
-
-    if (results) {
-      setOutputOpen(true);
-    }
-
   }
 
 

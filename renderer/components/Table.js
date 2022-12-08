@@ -1,13 +1,13 @@
 import * as React from 'react';
 
-import { Typography, TableRow, Table, TableBody, TableCell, TableContainer, TableHead, Paper, ButtonGroup, IconButton } from '@mui/material';
+import { Typography, TableRow, Table, TableBody, TableCell, TableContainer, TableHead, Paper, Button, ButtonGroup, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExtensionIcon from '@mui/icons-material/Extension';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import Link from 'next/link';
 
 
-export default function BasicTable({ data, handleDelete, handleEdit, handleCopy , handleSchedule }) {
+export default function BasicTable({ data, handleDelete, handleEdit, handleCopy }) {
     function createData(sno, name, description, timeStamp, id) {
         return { sno, name, description, timeStamp, id };
     }
@@ -95,11 +95,6 @@ export default function BasicTable({ data, handleDelete, handleEdit, handleCopy 
                                         handleCopy(row.id)
                                     }}>
                                         <ContentCopyIcon />
-                                    </IconButton>
-                                    <IconButton aria-label="schedule" size="small" color = {row.isScheduled?"primary":"error"}  onClick={() => {
-                                        handleSchedule(row.id)
-                                    }}>
-                                        <AccessTimeIcon />
                                     </IconButton>
 
                                 </ButtonGroup>

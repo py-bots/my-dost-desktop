@@ -1,12 +1,11 @@
-import { app, dialog, ipcMain, Tray ,Menu, nativeImage} from 'electron';
+import { app, dialog, ipcMain } from 'electron';
+const path = require('path');
 import serve from 'electron-serve';
 import { createWindow } from './helpers';
 const { autoUpdater } = require('electron-updater');
 const storageAct = require('./helpers/storageActivities.js');
-const pyAct = require('./helpers/pyActivities.js');
-const scheduleAct = require('./helpers/scheduleActivities.js');
-const path = require('path');
-var  isWindowOpen = false; 
+import { PythonShell } from 'python-shell';
+
 const isProd = process.env.NODE_ENV === 'production';
 let mainWindow
 if (isProd) {
@@ -15,62 +14,7 @@ if (isProd) {
   app.setPath('userData', `${app.getPath('userData')} (development)`);
 }
 
-let tray = null
-function createTray () {
-  console.log(__dirname+'//images//logo.png'); 
-  const icon = path.join(__dirname, '/../resources/icon.ico') // required.
-  const trayicon = nativeImage.createFromPath(icon) ; 
-  tray = new Tray(trayicon.resize({ width: 16 })) 
-  ;
-  tray.setToolTip('My Dost Application')
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Show App',
-      click: async ()  =>  {
-        if (isWindowOpen) {
-          return ; 
-        }
 
-         mainWindow = createWindow('main', {
-          width: 800,
-          height: 600,
-        });
-        console.log(mainWindow);
-        mainWindow.removeMenu();
-        isWindowOpen = true; 
-  const empty = storageAct.checkifEmpty();
-  if (isProd) {
-
-    if (empty) {
-      await mainWindow.loadURL('app://./get_started.html');
-    } else {
-      await mainWindow.loadURL('app://./dashboard.html');
-    }
-  } else {
-    const port = process.argv[2];
-    if (empty) {
-      await mainWindow.loadURL(`http://localhost:${port}/get_started`);
-    } else {
-      await mainWindow.loadURL(`http://localhost:${port}/dashboard`);
-    }
-    mainWindow.webContents.openDevTools();
-  }
-  //init db table 
-  
-  storageAct.createBotTable();
-      }
-    },
-    {type: "separator"},
-    {
-      label: 'Quit',
-      click: () => {
-        app.quit() // actually quit the app.
-      }
-    },
-  ])
-
-  tray.setContextMenu(contextMenu)
-}
 (async () => {
   await app.whenReady();
   mainWindow = createWindow('main', {
@@ -80,10 +24,8 @@ function createTray () {
       devTools: isProd ? false : true,
     }
   });
-  if (!tray) { // if tray hasn't been created already.
-    createTray()
-  }
   mainWindow.removeMenu();
+  mainWindow.maximize();
   const empty = storageAct.checkifEmpty();
   if (isProd) {
 
@@ -102,27 +44,11 @@ function createTray () {
     mainWindow.webContents.openDevTools();
   }
   //init db table 
-  
   storageAct.createBotTable();
-  scheduleAct.loadAllSchedules(); 
-  // get all cron jobs running again 
 })();
 
-
-app.on('window-all-closed', (event) => {
-  //console.log('close12')
-  isWindowOpen = false; 
-  event.preventDefault();
-  // mainWindow.hide();  // hide the app.
-  //for mac Os it is app.dock.hide()
-});
-
-
-app.on('window-close', (event) => {
-  console.log('close')
-  event.preventDefault();
-  // mainWindow.hide();  // hide the app.
-  //for mac Os it is app.dock.hide()
+app.on('window-all-closed', () => {
+  app.quit();
 });
 
 autoUpdater.on("update-available", async (_event, releaseNotes, releaseName) => {
@@ -182,8 +108,7 @@ ipcMain.handle('DBgetUserName', (event) => {
 });
 
 ipcMain.handle('DBdeleteBot', (event, args) => {
-  return storageAct.deleteBot(args.id) && scheduleAct.removeSchedule(args.id) && pyAct.deleteScriptFile({py_file_path : path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'py_files_folder', args.id) + ".py"});
-
+  return storageAct.deleteBot(args.id);
 });
 
 ipcMain.handle('DBupdateBot', (event, args) => {
@@ -252,38 +177,7 @@ ipcMain.handle('get-python-path', (event) => {
     }
   }
   );
+
+
+
 });
-
-
-ipcMain.handle('set-schedule', async (event,args) => {
-
-  if(args.bot.py_file_path == "NotSet" || !args.bot.py_file_path )
-  { 
-    console.log("No py file path set") ;
-    args.bot.py_file_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'py_files_folder', args.bot.id) + ".py";
-  }
-  console.log("bot file path : "+args.bot.py_file_path) ;
-  storageAct.updateBotFilePath(args.bot);
-  
-  await pyAct.saveScriptFile(args.bot);
-  console.log("Py Script Saved Successfully")
-  var scheduled = scheduleAct.setSchedule(args.bot.id, args.cronObj);
-  if(scheduled)
-  {
-    console.log("Schedule Set Successfully")
-    args.bot.isScheduled = true;
-    storageAct.updateBotisScheduled(args.bot);
-  }
- 
-}); 
-
-ipcMain.handle('remove-schedule', (event,args) => {
-  var removed = scheduleAct.removeSchedule(args.bot.id);
-  if(removed)
-  {
-    console.log("Schedule Removed Successfully")
-    args.bot.isScheduled = false;
-    storageAct.updateBotisScheduled(args.bot);
-  }
-});
-

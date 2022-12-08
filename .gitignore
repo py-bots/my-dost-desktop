@@ -132,3 +132,4 @@ electron-builder.yml
 
 electron-builder.env
 support/*
+*.7z

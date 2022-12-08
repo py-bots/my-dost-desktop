@@ -2,4 +2,3 @@
 3.Solving inplace TODOS 
 5. SQLLITE ORM 
 7. Differential Update
-8. Scheduler 

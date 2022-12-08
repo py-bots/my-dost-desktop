@@ -1,51 +1,16 @@
 import { PlusIcon } from '@heroicons/react/20/solid'
-import { Button, Fab } from '@mui/material';
+import { Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Modal from '../components/Model'
 import BasicTable from '../components/Table';
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import uuid from 'react-uuid';
 import { addBot, deleteDBBot, getAllBots, getUserName } from '../components/db-components';
 import { isProduction } from '../components/coderun-components';
 import React from 'react';
 import { version_info } from '../components/server-components.js';
 import { ipcRenderer } from 'electron';
-import { setSchedule,removeSchedule } from '../components/schedule-components';
-import TextField from '@mui/material/TextField';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs,{ Dayjs } from 'dayjs';
-import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
 
-var Bot = require('../../main/models/bot_model.js');
-var Cron = require('../../main/models/cron_model.js')
-
-
-const weekDays = ["S", "M", "T", "W", "T", "F", "S"]
-
-function SchedulePickerWindow(){
-    var value = dayjs("2022-04-07");
-    const setValue = (val) =>{
-        value = val ;
-    }; 
-    return (
-            <div>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <StaticTimePicker
-                    displayStaticWrapperAs="mobile"
-                    value={value}
-                    onChange={(newValue) => {
-                        setValue(newValue);
-                    }}
-                    onSubmit = {() => {
-                        console.log(value);
-                        }}
-                    renderInput={(params) => <TextField {...params} />}
-                    />
-                </LocalizationProvider>
-            </div>
-);
-}
 
 
 
@@ -55,7 +20,6 @@ function notificationWindow() {
     var [hiddenButton, setHiddenButton] = React.useState(true);
 
     useEffect(() => {
-        ipcRenderer.setMaxListeners(3); //test this later
         ipcRenderer.on('update_available', () => {
             SetHiddenWindow(false);
             setNotifText('A new update is available. Downloading now...');
@@ -125,13 +89,15 @@ function getVersion() {
     );
 }
 
+
+
+
+
 export default function Example() {
 
-    const [open, setOpen] = React.useState(false);
-    const [bots, setBots] = React.useState([]);
-    const [username, setUsername] = React.useState('');
-    var [showScheduleWindow, setShowScheduleWindow] = React.useState(false);
-    
+    const [open, setOpen] = useState(false);
+    const [bots, setBots] = useState([]);
+    const [username, setUsername] = useState('');
 
     useEffect(() => {
         // console.log(bots)
@@ -151,10 +117,15 @@ export default function Example() {
     const formSubmitted = async (e) => {
         e.preventDefault();
         const bot_name = e.target.floating_name.value;
-        console.log(bot_name);
         const bot_description = e.target.floating_description.value;
-        const bot = new Bot(uuid(), bot_name,bot_description , new Date().toLocaleString()) ; 
-
+        const bot = {
+            'id': uuid(),
+            'title': bot_name,
+            'description': bot_description,
+            'time': new Date().toLocaleString(),
+            'workspace': '',
+            'code': '',
+        }
         await addBot(bot); // add bot to db
 
         setBots(await getAllBots());
@@ -162,19 +133,20 @@ export default function Example() {
     }
 
     const deleteBot = async (id) => {
-        console.log(id, 'delete');
+        // console.log(id, 'delete');
         if (bots) {
             await deleteDBBot(id); // delete bot from db
             setBots(await getAllBots());
         }
-       
     }
 
     const editBot = async (id) => {
         // console.log(id, 'edit');
         const bot = bots.find(bot => bot.id === id);
         localStorage.setItem('bot', JSON.stringify(bot));
-
+        // console.log("Switching to editor")
+        // console.log(JSON.stringify(bot));
+        // console.log(window.location.href);
 
         if (await isProduction()) {
             window.location.href = 'app://./editor.html';
@@ -182,6 +154,8 @@ export default function Example() {
         else {
             window.location.href = "/editor";
         }
+
+
         //tried window.location.reload(); -failed 
         //tried Router.push('/editor'); - failed 
         // console.log(window.location.href);
@@ -193,39 +167,18 @@ export default function Example() {
 
         const botsArray = await getAllBots();
         const bot = botsArray.find(bot => bot.id === id);
-        const newName = "(copy) " + bot.name ;
-        const newBot = new Bot(uuid(), newName, bot.description, new Date().toLocaleString() ,bot.code , bot.workspace , false);
+        const newBot = {
+            'id': uuid(),
+            'title': '(Copy) ' + bot.name,
+            'description': bot.description,
+            'time': new Date().toLocaleString(),
+            'workspace': bot.workspace,
+            'code': bot.code,
+
+        }
         await addBot(newBot); // add bot to db
         setBots(await getAllBots());
 
-    }
-    const removeBotSchedule = async (id) => {
-        // console.log(id, 'remove schedule');
-        const bot = bots.find(bot => bot.id === id);
-        removeSchedule(bot);
-        setBots(await getAllBots());
-        return ;
-    }
-
-    const scheduleBot = async (id) => {
-
-        // console.log(id, 'schedule');
-        // const bot = bots.find(bot => bot.id === id);
-        // if(bot.isScheduled){ //this will change once there is proper ui to invoke the other function remove Schedule 
-        //     console.log("Removing schedule");
-        //     removeSchedule(bot);
-        //     setBots(await getAllBots());
-        //     return ;
-        // }
-        // //change till here 
-        // //cron input format -> hour (24 hour fornat):minute, [days of week by 1 and 0s], boolean for daily
-        // const cronObj = new Cron("0:*", [0,1,0,1,1,1,1],true) //input dump point for ui 
-        // console.log(cronObj);
-        // console.log(cronObj.toUsable());
-        // await setSchedule(bot, cronObj);
-        // setBots(await getAllBots());
-        setShowScheduleWindow(true);
-        return ;
     }
 
 
@@ -241,7 +194,6 @@ export default function Example() {
 
                                 </span> Dashboard
                                 {notificationWindow()}
-                                {showScheduleWindow && SchedulePickerWindow()}
                             </h1>
                         </div>
                     </header>
@@ -252,7 +204,7 @@ export default function Example() {
                         {getVersion()}
                         {(bots && bots.length > 0) ? (
                             <div>
-                                <BasicTable data={bots} handleCopy={copyBot} handleEdit={editBot} handleDelete={deleteBot} handleSchedule = {scheduleBot}/>
+                                <BasicTable data={bots} handleCopy={copyBot} handleEdit={editBot} handleDelete={deleteBot} />
                                 <Fab color="primary" aria-label="add" sx={
                                     {
                                         position: 'absolute',
