@@ -3,14 +3,15 @@ const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
 
-const dbPath = path.join(app.getPath('appData'), 'PyBOTs LLC', 'DOST', 'data', 'user.sqlite');
+const dbPath = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'database', 'data.sqlite');
 
 if (!fs.existsSync(path.dirname(dbPath))) {
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-     console.log('Created directory: ' + path.dirname(dbPath));
-} else {
-    // console.log('Directory already exists: ' + path.dirname(dbPath));
 }
+// else {
+//     // console.log('Directory already exists: ' + path.dirname(dbPath));
+//     pass
+// }
 
 const db = new sqlite(dbPath);
 exports.db = db;

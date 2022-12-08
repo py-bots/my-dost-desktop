@@ -201,10 +201,38 @@ ipcMain.on('restart_app', () => {
 
 
 ipcMain.handle('runScript', (event, args) => {
-
-  args.pre_def_path =  path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'support', 'python.exe');
-  return pyAct.runScript(args); 
-
+  var run = new Promise((resolve, reject) => {
+    try {
+      if (isProd) {
+        var pre_def_path = path.join(app.getPath('home'), '..', 'Public', 'PyBOTs LLC', 'DOST', 'support', 'python.exe');
+      } else {
+        var pre_def_path = path.join(__dirname, '..', 'support', 'python.exe');
+      }
+      var pyPath = args.pythonPath && args.pythonPath != '' ? args.pythonPath : pre_def_path;
+      let options =
+      {
+        mode: 'text',
+        pythonPath: pyPath,
+      };
+      //console.log("path is " + path);
+      PythonShell.runString(args.codeString, options, function (err, results) {
+        if (err) throw err;
+        resolve(results);
+      });
+    } catch (error) {
+      //console.log("error occured " + error);
+      reject(error);
+    }
+  }
+  )
+  return run.then((result) => {
+    //console.log(result);
+    return result;
+  }
+  ).catch((error) => {
+    return error;
+  }
+  )
 });
 
 
@@ -257,6 +285,5 @@ ipcMain.handle('remove-schedule', (event,args) => {
     args.bot.isScheduled = false;
     storageAct.updateBotisScheduled(args.bot);
   }
-
 });
 

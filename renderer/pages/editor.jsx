@@ -15,6 +15,7 @@ const BlocklyWorkspace = dynamic(
 )
 import { usePromptDialog } from "../components/PromptDialog";
 import ConfigFiles from '../editor/constants'
+import '../editor/BlocksData';
 import { updateDBBot } from '../components/db-components';
 import { runCodeString } from '../components/coderun-components';
 import electron from 'electron';
@@ -109,13 +110,17 @@ function Next() {
   const runCodeScript = async () => {
     var results = await runCodeString(pythonCode, pythonPath);
     setPythonOutput(results);
-    setOutputOpen(true);
     if (results && results[results.length - 1] == "Error") {
       setPythonError(true);
     }
     else {
       setPythonError(false);
     }
+
+    if (results) {
+      setOutputOpen(true);
+    }
+
   }
 
 

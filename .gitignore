@@ -131,3 +131,4 @@ app/
 electron-builder.yml
 
 electron-builder.env
+support/*
