@@ -12,8 +12,7 @@
 ## Screenshots
 
 ### Your Dashboard
-![image](https://user-images.githubusercontent.com/76046349/198548550-adb68071-7799-43e9-92a1-6451a2b045f1.png)![1fac2](https://user-images.githubusercontent.com/67296473/208698406-6f2b28df-a384-41a8-88e8-75dbedaabaf1.png)
-
+![image](https://user-images.githubusercontent.com/76046349/198548550-adb68071-7799-43e9-92a1-6451a2b045f1.png)
 
 ### Add a Program!
 ![image](https://user-images.githubusercontent.com/76046349/198548726-617174b3-e516-4001-a19f-08b53b428151.png)
