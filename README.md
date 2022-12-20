@@ -1,16 +1,19 @@
-# DOST
+# DOST 🤗
+
 
 ### DOST (Friend) is a Python open-source library that helps you to write your code in a more readable and understandable way. And also help you in your python journey. Learn python in more practical way with DOST.
 
 - Made with ❤️ at **[PyBOTs](https://www.pybots.ai/)**.
-- Write and Run Python Programs Rapidly with Dost , your all in one programming tool.
+- Documentation can be found at **[DOST Docs](https://py-bots.github.io/dost/)**.
+- Write and Run Python Programs Rapidly with DOST , your all in one programming tool.
 - You do not need to be a programmer to write and run your programs anymore!
 - DOST is a highly performant, efficient and easy to use application built with latest technologies like Nextjs and Electron.
 
 ## Screenshots
 
 ### Your Dashboard
-![image](https://user-images.githubusercontent.com/76046349/198548550-adb68071-7799-43e9-92a1-6451a2b045f1.png)
+![image](https://user-images.githubusercontent.com/76046349/198548550-adb68071-7799-43e9-92a1-6451a2b045f1.png)![1fac2](https://user-images.githubusercontent.com/67296473/208698406-6f2b28df-a384-41a8-88e8-75dbedaabaf1.png)
+
 
 ### Add a Program!
 ![image](https://user-images.githubusercontent.com/76046349/198548726-617174b3-e516-4001-a19f-08b53b428151.png)
